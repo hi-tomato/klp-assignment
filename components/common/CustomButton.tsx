@@ -6,12 +6,14 @@ interface CustomButtonProps extends PressableProps {
   label: string;
   size?: "medium" | "large";
   variant?: "filled";
+  disabled?: boolean;
 }
 
 export default function CustomButton({
   label,
   size = "large",
   variant = "filled",
+  disabled = false,
   ...props
 }: CustomButtonProps) {
   return (
@@ -22,9 +24,10 @@ export default function CustomButton({
         styles[size],
         styles[variant],
         pressed && styles.pressed,
+        disabled && styles.disabled,
       ]}
     >
-      <Text style={styles[variant]}>{label}</Text>
+      <Text style={styles[`${variant}Text`]}>{label}</Text>
     </Pressable>
   );
 }
@@ -36,7 +39,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   medium: {
-    //
+    alignSelf: "center",
+    paddingHorizontal: 12,
+    height: 38,
   },
   large: {
     width: "100%",
@@ -48,7 +53,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: colors.WHITE,
   },
+  filledText: {
+    color: colors.WHITE,
+  },
   pressed: {
     opacity: 0.7,
+  },
+  disabled: {
+    backgroundColor: colors.GRAY_300,
+    color: colors.WHITE,
   },
 });
