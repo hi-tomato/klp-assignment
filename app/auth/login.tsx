@@ -1,9 +1,11 @@
 import FixedButtonCTA from "@/components/common/FixedButtonCTA";
 import EmailInput from "@/components/input/EmailInput";
 import PasswordInput from "@/components/input/PasswordInput";
+import { useLogin } from "@/hooks/useLogin";
+import { router } from "expo-router";
 import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 type FormValues = {
   email: string;
@@ -11,6 +13,8 @@ type FormValues = {
 };
 
 export default function LoginScreen() {
+  const { login, error, isLoading } = useLogin();
+
   const loginFormValues = useForm<FormValues>({
     defaultValues: {
       email: "",
@@ -18,10 +22,14 @@ export default function LoginScreen() {
     },
   });
 
-  const onSubmit = (data: FormValues) => {
-    // TODO: 실제 API 연동 필요함.
-    console.log("로그인 데이터: " + data);
+  const onSubmit = async (data: FormValues) => {
+    const { email, password } = data;
+    await login(email, password);
+    router.push("/");
   };
+
+  if (isLoading) return <Text>Loading...</Text>;
+  if (error) return <Text>Error: {error.message}</Text>;
 
   return (
     <FormProvider {...loginFormValues}>
