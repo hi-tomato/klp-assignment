@@ -1,12 +1,13 @@
-import CustomButton from "@/components/common/CustomButton";
-import { View } from "react-native";
+import { Link } from "expo-router";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   return (
     <SafeAreaView>
       <View>
-        <CustomButton label="테스트 버튼" onPress={() => {}} />
+        <Text>Home Screen</Text>
+        <Link href="/auth">로그인 창으로 이동하기</Link>
       </View>
     </SafeAreaView>
   );
