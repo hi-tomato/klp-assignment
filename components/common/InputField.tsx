@@ -1,5 +1,5 @@
 import { colors } from "@/constants/colors";
-import React, { ReactNode } from "react";
+import React, { ForwardedRef, forwardRef, ReactNode } from "react";
 import {
   StyleSheet,
   Text,
@@ -16,14 +16,17 @@ interface InputFieldProps extends TextInputProps {
   rightElement?: ReactNode;
 }
 
-export default function InputField({
-  label,
-  placeholder,
-  variant = "filled",
-  errorMessage = "",
-  rightElement,
-  ...props
-}: InputFieldProps) {
+const InputField = (
+  {
+    label,
+    placeholder,
+    variant = "filled",
+    errorMessage = "",
+    rightElement,
+    ...props
+  }: InputFieldProps,
+  ref?: ForwardedRef<TextInput>
+) => {
   return (
     <>
       <View>{label && <Text style={styles.label}>{label}</Text>}</View>
@@ -42,6 +45,7 @@ export default function InputField({
           autoCorrect={false}
           returnKeyType="next"
           submitBehavior="submit"
+          ref={ref}
           {...props}
         />
         {rightElement && rightElement}
@@ -52,13 +56,14 @@ export default function InputField({
       )}
     </>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     height: 44,
     borderRadius: 8,
     paddingHorizontal: 10,
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -92,3 +97,5 @@ const styles = StyleSheet.create({
     backgroundColor: "red",
   },
 });
+
+export default forwardRef(InputField);

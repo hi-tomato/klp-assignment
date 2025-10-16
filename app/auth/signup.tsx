@@ -1,50 +1,55 @@
 import FixedButtonCTA from "@/components/common/FixedButtonCTA";
-import InputField from "@/components/common/InputField";
+import EmailInput from "@/components/input/EmailInput";
+import PasswordConfirmInput from "@/components/input/PasswordConfirmInput";
+import PasswordInput from "@/components/input/PasswordInput";
+import { useSignUp } from "@/hooks/useSignUp";
 import { router } from "expo-router";
-import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import React from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { StyleSheet, Text, View } from "react-native";
+
+type SignUpFormValues = {
+  email: string;
+  password: string;
+  passwordConfirm: string;
+};
 
 export default function SignUpScreen() {
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-    passwordConfirm: "",
+  const { signUp, error, isLoading } = useSignUp();
+  const signUpFormValues = useForm<SignUpFormValues>({
+    defaultValues: {
+      email: "",
+      password: "",
+      passwordConfirm: "",
+    },
   });
 
-  const handleChangeText = (type: string, text: string) => {
-    setForm((prev) => ({ ...prev, [type]: text }));
-  };
-
-  const handleSignUp = () => {
+  const onSubmit = async (data: SignUpFormValues) => {
     // TODO: 회원가입 API 연결
-    if (true) {
+    try {
+      const { email, password } = data;
+      await signUp(email, password);
       router.push("/auth/login");
+    } catch (error) {
+      console.error("회원가입 실패:", error);
     }
   };
 
-  return (
-    <View style={styles.container}>
-      <InputField
-        label="이메일"
-        placeholder="이메일을 입력해주세요."
-        value={form.email}
-        onChangeText={(t) => handleChangeText("email", t)}
-      />
-      <InputField
-        label="비밀번호"
-        placeholder="비밀번호를 입력해주세요."
-        value={form.password}
-        onChangeText={(t) => handleChangeText("password", t)}
-      />
-      <InputField
-        label="비밀번호 확인"
-        placeholder="비밀번호를 입력해주세요."
-        value={form.passwordConfirm}
-        onChangeText={(t) => handleChangeText("passwordConfirm", t)}
-      />
+  if (isLoading) return <Text>Loading...</Text>;
+  if (error) return <Text>Error: {error.message}</Text>;
 
-      <FixedButtonCTA label="회원가입" onPress={handleSignUp} />
-    </View>
+  return (
+    <FormProvider {...signUpFormValues}>
+      <View style={styles.container}>
+        <EmailInput />
+        <PasswordInput />
+        <PasswordConfirmInput />
+      </View>
+      <FixedButtonCTA
+        label="회원가입"
+        onPress={signUpFormValues.handleSubmit(onSubmit)}
+      />
+    </FormProvider>
   );
 }
 
