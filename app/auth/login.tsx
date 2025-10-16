@@ -1,11 +1,11 @@
 import FixedButtonCTA from "@/components/common/FixedButtonCTA";
 import EmailInput from "@/components/input/EmailInput";
 import PasswordInput from "@/components/input/PasswordInput";
-import { useLogin } from "@/hooks/useLogin";
+import { useAuthStore } from "@/store/useAuthStore";
 import { router } from "expo-router";
 import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 type FormValues = {
   email: string;
@@ -13,7 +13,7 @@ type FormValues = {
 };
 
 export default function LoginScreen() {
-  const { login, error, isLoading } = useLogin();
+  const { login } = useAuthStore();
 
   const loginFormValues = useForm<FormValues>({
     defaultValues: {
@@ -27,9 +27,6 @@ export default function LoginScreen() {
     await login(email, password);
     router.push("/");
   };
-
-  if (isLoading) return <Text>Loading...</Text>;
-  if (error) return <Text>Error: {error.message}</Text>;
 
   return (
     <FormProvider {...loginFormValues}>
