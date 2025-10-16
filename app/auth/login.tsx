@@ -1,35 +1,39 @@
 import FixedButtonCTA from "@/components/common/FixedButtonCTA";
-import InputField from "@/components/common/InputField";
-import React, { useState } from "react";
+import EmailInput from "@/components/input/EmailInput";
+import PasswordInput from "@/components/input/PasswordInput";
+import React from "react";
+import { FormProvider, useForm } from "react-hook-form";
 import { StyleSheet, View } from "react-native";
 
+type FormValues = {
+  email: string;
+  password: string;
+};
+
 export default function LoginScreen() {
-  const [formValue, setFormValue] = useState({
-    email: "",
-    password: "",
+  const loginFormValues = useForm<FormValues>({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
-  const handleChangeText = (type: string, text: string) => {
-    setFormValue((prev) => ({ ...prev, [type]: text }));
+  const onSubmit = (data: FormValues) => {
+    // TODO: 실제 API 연동 필요함.
+    console.log("로그인 데이터: " + data);
   };
 
   return (
-    <View style={styles.container}>
-      <InputField
-        label="이메일"
-        placeholder="이메일을 입력해주세요"
-        value={formValue.email}
-        onChangeText={(t) => handleChangeText("email", t)}
+    <FormProvider {...loginFormValues}>
+      <View style={styles.container}>
+        <EmailInput />
+        <PasswordInput />
+      </View>
+      <FixedButtonCTA
+        label="로그인하기"
+        onPress={loginFormValues.handleSubmit(onSubmit)}
       />
-      <InputField
-        label="이메일"
-        placeholder="이메일을 입력해주세요"
-        value={formValue.password}
-        onChangeText={() => {}}
-      />
-
-      <FixedButtonCTA label="로그인하기" onPress={() => {}} />
-    </View>
+    </FormProvider>
   );
 }
 
