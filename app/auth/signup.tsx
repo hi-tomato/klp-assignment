@@ -2,9 +2,11 @@ import FixedButtonCTA from "@/components/common/FixedButtonCTA";
 import EmailInput from "@/components/input/EmailInput";
 import PasswordConfirmInput from "@/components/input/PasswordConfirmInput";
 import PasswordInput from "@/components/input/PasswordInput";
+import { useSignUp } from "@/hooks/useSignUp";
+import { router } from "expo-router";
 import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 type SignUpFormValues = {
   email: string;
@@ -13,6 +15,7 @@ type SignUpFormValues = {
 };
 
 export default function SignUpScreen() {
+  const { signUp, error, isLoading } = useSignUp();
   const signUpFormValues = useForm<SignUpFormValues>({
     defaultValues: {
       email: "",
@@ -21,10 +24,19 @@ export default function SignUpScreen() {
     },
   });
 
-  const onSubmit = (data: SignUpFormValues) => {
+  const onSubmit = async (data: SignUpFormValues) => {
     // TODO: 회원가입 API 연결
-    console.log("회원가입 데이터: " + data);
+    try {
+      const { email, password } = data;
+      await signUp(email, password);
+      router.push("/auth/login");
+    } catch (error) {
+      console.error("회원가입 실패:", error);
+    }
   };
+
+  if (isLoading) return <Text>Loading...</Text>;
+  if (error) return <Text>Error: {error.message}</Text>;
 
   return (
     <FormProvider {...signUpFormValues}>
