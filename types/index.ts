@@ -34,4 +34,9 @@ interface PostComment {
   authorImageUrl?: string;
 }
 
-export type { Post, PostComment, PostLike };
+interface Like {
+  userId: string;
+  createdAt: Timestamp;
+}
+
+export type { Like, Post, PostComment, PostLike };
