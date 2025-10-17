@@ -1,5 +1,14 @@
 import { auth, db } from "@/lib/firebase";
-import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { Post } from "@/types";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  Timestamp,
+} from "firebase/firestore";
 
 import { useState } from "react";
 
@@ -51,4 +60,49 @@ export const useCreatePost = () => {
   };
 
   return { createPost, loading, error };
+};
+
+export const useDeletePost = () => {
+  const [error, setError] = useState<string | null>(null);
+
+  const deletePost = async (postId: string) => {
+    const user = auth.currentUser;
+
+    if (!user) {
+      throw new Error("로그인이 필요합니다.");
+    }
+
+    try {
+      const postRef = doc(db, "posts", postId);
+      const postSnap = await getDoc(postRef);
+
+      if (!postSnap.exists()) {
+        throw new Error("게시글을 찾을 수 없습니다.");
+      }
+
+      const postData = postSnap.data() as Post;
+
+      if (postData.authorId !== user?.uid) {
+        throw new Error("삭제 권한이 없습니다.");
+      }
+
+      const likesSnap = await getDocs(collection(db, `posts/${postId}/likes`));
+      const likeDeletePromise = likesSnap.docs.map((doc) => deleteDoc(doc.ref));
+      await Promise.all(likeDeletePromise);
+
+      const commentsSnap = await getDocs(
+        collection(db, `posts/${postId}/comments`)
+      );
+      const commentDeletePromise = commentsSnap.docs.map((doc) =>
+        deleteDoc(doc.ref)
+      );
+      await Promise.all(commentDeletePromise);
+
+      await deleteDoc(postRef);
+      return true;
+    } catch (error) {
+      setError(error as string);
+    }
+  };
+  return { deletePost, error };
 };
