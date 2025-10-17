@@ -1,14 +1,10 @@
 import { auth, db } from "@/lib/firebase";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { addDoc, collection, Timestamp } from "firebase/firestore";
 
 import { useState } from "react";
 
 interface CreatePost {
-  content: string;
-  imageUrl: string[];
-}
-
-interface CreatePost {
+  title: string;
   content: string;
   imageUrl: string[];
 }
@@ -17,7 +13,7 @@ export const useCreatePost = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const createPost = async ({ content, imageUrl = [] }: CreatePost) => {
+  const createPost = async ({ title, content, imageUrl = [] }: CreatePost) => {
     const user = auth.currentUser;
 
     if (!user) {
@@ -32,9 +28,10 @@ export const useCreatePost = () => {
     try {
       const postData = {
         authorId: user.uid,
+        title,
         content,
         imageUrl,
-        createdAt: serverTimestamp(),
+        createdAt: Timestamp.now(),
         likeCount: 0,
         commentCount: 0,
       };
