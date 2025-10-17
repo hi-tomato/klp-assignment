@@ -1,25 +1,21 @@
 import { colors } from "@/constants/colors";
 import { useAuthStore } from "@/store/useAuthStore";
+import { PostComment } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import InputField from "../common/InputField";
 import Profile from "./Profile";
 
-const comment = {
-  user: {
-    id: "1",
-    name: "이승준",
-    email: "test@naver.com",
-  },
-  content: "목데이터 댓글입니다.",
-};
-
 interface CommentItemProps {
+  comment: PostComment;
   isReply?: boolean;
 }
 
-export default function CommentItem({ isReply = true }: CommentItemProps) {
+export default function CommentItem({
+  comment,
+  isReply = true,
+}: CommentItemProps) {
   const { user } = useAuthStore();
 
   const handlePressOption = () => {
@@ -34,12 +30,22 @@ export default function CommentItem({ isReply = true }: CommentItemProps) {
     // TODO:
   };
 
+  if (!comment)
+    return (
+      <View>
+        <Text>댓글이 존재하지 않습니다.</Text>
+      </View>
+    );
+
   return (
     <View style={[styles.container]}>
       <Profile
-        user={user as any}
+        displayName={comment.authorId}
+        createdAt={comment.createdAt.toDate().toLocaleString()}
+        imageUri={comment.authorImageUrl || ""}
+        onPress={() => {}}
         option={
-          user?.uid === comment.user.id && (
+          user?.uid === comment.authorId && (
             <Ionicons
               name="ellipsis-vertical"
               size={24}
