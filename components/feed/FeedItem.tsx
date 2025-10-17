@@ -1,5 +1,5 @@
 import { colors } from "@/constants/colors";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useLike } from "@/hooks/useLike";
 import { Post } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -14,9 +14,7 @@ interface FeedItemProps {
 }
 
 export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
-  const { user } = useAuthStore();
-
-  console.log("feedItem postID: ", post?.id);
+  const { toggleLiked, isLiked } = useLike(post?.id ?? "");
 
   const Container = isDetail ? View : Pressable;
 
@@ -53,12 +51,22 @@ export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
 
       <View style={styles.actionContainer}>
         <Pressable style={styles.menu}>
-          <Ionicons name="heart" size={24} color={colors.BLACK} />
-          <Text style={styles.menuText}>0</Text>
+          <Ionicons
+            name={isLiked ? "heart" : "heart-outline"}
+            size={24}
+            color={isLiked ? "red" : colors.BLACK}
+            onPress={() => toggleLiked(post.id)}
+          />
+          <Text style={styles.menuText}>{post.likeCount}</Text>
         </Pressable>
         <Pressable style={styles.menu}>
-          <Ionicons name="chatbox" size={24} color={colors.BLACK} />
-          <Text style={styles.menuText}>0</Text>
+          <Ionicons
+            name={post.commentCount > 0 ? "chatbox" : "chatbox-outline"}
+            size={24}
+            color={post.commentCount > 0 ? colors.BLACK : colors.GRAY_500}
+            onPress={() => router.push(`/post/${post.id}`)}
+          />
+          <Text style={styles.menuText}>{post.commentCount}</Text>
         </Pressable>
       </View>
     </Container>
