@@ -1,10 +1,11 @@
 import { colors } from "@/constants/colors";
 import { useLike } from "@/hooks/useLike";
+import { useDeletePost } from "@/hooks/usePost";
 import { Post } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import ImagePreview from "./ImagePreview";
 import Profile from "./Profile";
 
@@ -15,11 +16,24 @@ interface FeedItemProps {
 
 export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
   const { toggleLiked, isLiked } = useLike(post?.id ?? "");
-
+  const { deletePost } = useDeletePost();
   const Container = isDetail ? View : Pressable;
 
-  const handleMoreOption = () => {
-    // TODO: 삭제, 취소 버튼
+  const handleMoreOption = async () => {
+    Alert.alert("게시글 삭제", "게시글을 삭제하시겠습니까?", [
+      {
+        text: "취소",
+        style: "cancel",
+      },
+      {
+        text: "삭제",
+        style: "destructive",
+        onPress: async () => {
+          const result = await deletePost(post?.id ?? "");
+          result && router.reload();
+        },
+      },
+    ]);
   };
 
   if (!post) return null;
@@ -44,7 +58,7 @@ export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
         }
       />
       <Text numberOfLines={3} style={styles.description}>
-        {post.content || "내용이 불러오지 못했습니다."}
+        {post.content}
       </Text>
 
       <ImagePreview imageUris={post.imageUrl} />
@@ -55,7 +69,7 @@ export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
             name={isLiked ? "heart" : "heart-outline"}
             size={24}
             color={isLiked ? "red" : colors.BLACK}
-            onPress={() => toggleLiked(post.id)}
+            onPress={() => toggleLiked()}
           />
           <Text style={styles.menuText}>{post.likeCount}</Text>
         </Pressable>
