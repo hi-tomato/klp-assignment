@@ -1,18 +1,29 @@
 import { colors } from "@/constants/colors";
 import { Ionicons } from "@expo/vector-icons";
-import { User } from "firebase/auth";
+import { router } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import ImagePreview from "./ImagePreview";
 import Profile from "./Profile";
 
-export default function FeedItem({ user }: { user: User }) {
+interface FeedItemProps {
+  user: any;
+  isDetail?: boolean;
+}
+const post = { id: "1" };
+
+export default function FeedItem({ user, isDetail = false }: FeedItemProps) {
+  const Container = isDetail ? View : Pressable;
+
   const handleMoreOption = () => {
     // TODO: 삭제, 취소 버튼
   };
 
   return (
-    <View style={styles.contentContainer}>
+    <Container
+      style={styles.contentContainer}
+      onPress={() => router.push(`/post/${post.id}`)}
+    >
       <Profile
         user={user}
         option={
@@ -42,7 +53,7 @@ export default function FeedItem({ user }: { user: User }) {
           <Text style={styles.menuText}>0</Text>
         </Pressable>
       </View>
-    </View>
+    </Container>
   );
 }
 
