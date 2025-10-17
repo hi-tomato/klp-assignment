@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { User } from "firebase/auth";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import ImagePreview from "./ImagePreview";
 import Profile from "./Profile";
 
 export default function FeedItem({ user }: { user: User }) {
@@ -28,6 +29,8 @@ export default function FeedItem({ user }: { user: User }) {
         dolor sit amet consectetur adipisicing elit. Lorem ipsum, dolor sit amet
         consectetur adipisicing elit.
       </Text>
+
+      <ImagePreview imageUris={["https://picsum.photos/200/300"]} />
 
       <View style={styles.actionContainer}>
         <Pressable style={styles.menu}>
