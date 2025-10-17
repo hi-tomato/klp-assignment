@@ -1,74 +1,22 @@
-import FeedItem from "@/components/feed/FeedItem";
+import FeedList from "@/components/feed/FeedList";
 import { colors } from "@/constants/colors";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Ionicons } from "@expo/vector-icons";
-import { useScrollToTop } from "@react-navigation/native";
-import { useRef } from "react";
-import { FlatList, Pressable, StyleSheet } from "react-native";
+import { router } from "expo-router";
+import { Pressable, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-const dummyData = [
-  {
-    id: "1",
-    user: {
-      id: "1",
-      name: "이승준",
-      email: "test@naver.com",
-    },
-    content: "목데이터입니다.",
-    images: ["https://picsum.photos/200/300"],
-    createdAt: new Date(),
-  },
-  {
-    id: "1",
-    user: {
-      id: "1",
-      name: "이승준",
-      email: "test@naver.com",
-    },
-    content: "목데이터입니다.",
-    images: ["https://picsum.photos/200/300"],
-    createdAt: new Date(),
-  },
-  {
-    id: "1",
-    user: {
-      id: "1",
-      name: "이승준",
-      email: "test@naver.com",
-    },
-    content: "목데이터입니다.",
-    images: ["https://picsum.photos/200/300"],
-    createdAt: new Date(),
-  },
-  {
-    id: "1",
-    user: {
-      id: "1",
-      name: "이승준",
-      email: "test@naver.com",
-    },
-    content: "목데이터입니다.",
-    images: ["https://picsum.photos/200/300"],
-    createdAt: new Date(),
-  },
-];
 
 export default function HomeScreen() {
   const { user } = useAuthStore();
-  const flatListRef = useRef<FlatList | null>(null);
-  useScrollToTop(flatListRef);
 
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        data={dummyData}
-        ref={flatListRef}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <FeedItem user={item.user} />}
-      />
+      <FeedList />
       {user?.email && (
-        <Pressable style={styles.editButton}>
+        <Pressable
+          style={styles.editButton}
+          onPress={() => router.push("/post/write")}
+        >
           <Ionicons name="pencil" size={32} color={"white"} />
         </Pressable>
       )}
