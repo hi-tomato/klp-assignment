@@ -10,7 +10,7 @@ import {
 
 interface InputFieldProps extends TextInputProps {
   label?: string;
-  placeholder: string;
+  placeholder?: string;
   variant?: "filled" | "standard" | "outlined";
   errorMessage?: string;
   rightElement?: ReactNode;
