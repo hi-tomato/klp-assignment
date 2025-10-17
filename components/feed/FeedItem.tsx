@@ -1,4 +1,6 @@
 import { colors } from "@/constants/colors";
+import { useAuthStore } from "@/store/useAuthStore";
+import { Post } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
@@ -7,17 +9,22 @@ import ImagePreview from "./ImagePreview";
 import Profile from "./Profile";
 
 interface FeedItemProps {
-  user: any;
+  post: Post | null;
   isDetail?: boolean;
 }
-const post = { id: "1" };
 
-export default function FeedItem({ user, isDetail = false }: FeedItemProps) {
+export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
+  const { user } = useAuthStore();
+
+  console.log("feedItem postID: ", post?.id);
+
   const Container = isDetail ? View : Pressable;
 
   const handleMoreOption = () => {
     // TODO: 삭제, 취소 버튼
   };
+
+  if (!post) return null;
 
   return (
     <Container
@@ -25,7 +32,10 @@ export default function FeedItem({ user, isDetail = false }: FeedItemProps) {
       onPress={() => router.push(`/post/${post.id}`)}
     >
       <Profile
-        user={user}
+        displayName={post.authorId}
+        createdAt={post.createdAt.toDate().toLocaleString() || "방금 전"}
+        imageUri={post.imageUrl[0]}
+        onPress={() => router.push(`/post/${post.id}`)}
         option={
           <Ionicons
             name="ellipsis-vertical"
@@ -36,12 +46,10 @@ export default function FeedItem({ user, isDetail = false }: FeedItemProps) {
         }
       />
       <Text numberOfLines={3} style={styles.description}>
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Lorem ipsum,
-        dolor sit amet consectetur adipisicing elit. Lorem ipsum, dolor sit amet
-        consectetur adipisicing elit.
+        {post.content || "내용이 불러오지 못했습니다."}
       </Text>
 
-      <ImagePreview imageUris={["https://picsum.photos/200/300"]} />
+      <ImagePreview imageUris={post.imageUrl} />
 
       <View style={styles.actionContainer}>
         <Pressable style={styles.menu}>
