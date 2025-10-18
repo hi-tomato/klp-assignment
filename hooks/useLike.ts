@@ -11,7 +11,7 @@ import {
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
-export const useLike = (postId: string) => {
+export const useLike = (postId?: string) => {
   const { user } = useAuthStore();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -19,6 +19,11 @@ export const useLike = (postId: string) => {
 
   useEffect(
     function checkLikedEffect() {
+      if (!postId || postId.trim() === "" || !user?.uid) {
+        setIsLiked(false);
+        return;
+      }
+
       try {
         const checkLiked = async () => {
           const likeRef = doc(db, `posts/${postId}/likes/${user?.uid}`);
@@ -27,14 +32,14 @@ export const useLike = (postId: string) => {
         };
 
         checkLiked();
-      } catch (error) {
+      } catch (error: any) {
         setError("에러가 발생하였습니다.");
       }
     },
     [postId, user]
   );
 
-  const toggleLiked = async (postId: string) => {
+  const toggleLiked = async () => {
     if (!user) {
       setError("로그인 후, 이용해주세요.");
       setLoading(false);
