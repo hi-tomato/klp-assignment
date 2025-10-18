@@ -2,10 +2,12 @@ import { colors } from "@/constants/colors";
 import { useLike } from "@/hooks/useLike";
 import { useDeletePost } from "@/hooks/usePost";
 import { Post } from "@/types";
+import { useActionSheet } from "@expo/react-native-action-sheet";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import Toast from "react-native-toast-message";
 import ImagePreview from "./ImagePreview";
 import Profile from "./Profile";
 
@@ -15,25 +17,52 @@ interface FeedItemProps {
 }
 
 export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
+  const { showActionSheetWithOptions } = useActionSheet();
   const { toggleLiked, isLiked } = useLike(post?.id ?? "");
   const { deletePost } = useDeletePost();
   const Container = isDetail ? View : Pressable;
 
-  const handleMoreOption = async () => {
-    Alert.alert("게시글 삭제", "게시글을 삭제하시겠습니까?", [
+  const handleMoreOption = () => {
+    const options = ["삭제", "수정", "취소"];
+    const destructiveButtonIndex = 0;
+    const updateButtonIndex = 1;
+    const cancelButtonIndex = 2;
+
+    showActionSheetWithOptions(
       {
-        text: "취소",
-        style: "cancel",
+        options,
+        cancelButtonIndex,
+        destructiveButtonIndex,
       },
-      {
-        text: "삭제",
-        style: "destructive",
-        onPress: async () => {
-          const result = await deletePost(post?.id ?? "");
-          result && router.reload();
-        },
-      },
-    ]);
+      async (selectedIndex) => {
+        switch (selectedIndex) {
+          case destructiveButtonIndex:
+            try {
+              const result = await deletePost(post?.id ?? "");
+              Toast.show({
+                type: result ? "success" : "error",
+                text1: result
+                  ? "게시글이 삭제되었습니다."
+                  : "게시글 삭제에 실패했습니다.",
+              });
+              result && router.reload();
+            } catch (error) {
+              Toast.show({
+                type: "error",
+                text1: "게시글 삭제에 실패했습니다.",
+              });
+            }
+            break;
+
+          case updateButtonIndex:
+            router.push(`/post/write?id=${post?.id}`);
+            break;
+
+          case cancelButtonIndex:
+            break;
+        }
+      }
+    );
   };
 
   if (!post) return null;
