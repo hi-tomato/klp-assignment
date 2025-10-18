@@ -1,10 +1,11 @@
 import { colors } from "@/constants/colors";
 import { useDeleteComment } from "@/hooks/useDeleteComment";
+import { useUpdateComment } from "@/hooks/useUpdateComment";
 import { useAuthStore } from "@/store/useAuthStore";
 import { PostComment } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import InputField from "../common/InputField";
 import Profile from "./Profile";
@@ -18,9 +19,12 @@ export default function CommentItem({
   comment,
   isReply = true,
 }: CommentItemProps) {
-  const { user } = useAuthStore();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState(comment.content);
 
+  const { user } = useAuthStore();
   const { deleteComment } = useDeleteComment(comment.postId);
+  const { updateComment } = useUpdateComment(comment.postId);
 
   const handlePressOption = () => {
     Alert.alert("댓글 삭제", "댓글을 삭제하시겠습니까?", [
@@ -37,12 +41,19 @@ export default function CommentItem({
     ]);
   };
 
-  const handleReplySubmit = () => {
-    // TODO: 대댓글 기능
-  };
-
-  const handleShowReplyInput = () => {
-    // TODO:
+  const handleUpdateComment = () => {
+    setIsEditing(true);
+    Alert.alert("댓글 수정", "댓글을 수정하시겠습니까?", [
+      { text: "취소" },
+      {
+        text: "수정",
+        onPress: async () => {
+          const result = await updateComment(comment.id, editedContent);
+          setIsEditing(false);
+          result && router.reload();
+        },
+      },
+    ]);
   };
 
   if (!comment)
@@ -74,10 +85,15 @@ export default function CommentItem({
         editable={false}
         value={!comment.content ? "삭제된 댓글입니다." : comment.content}
       />
-      {isReply && (
-        <Pressable style={styles.replyContainer} onPress={() => {}}>
-          <Text style={styles.replyText}>답글 남기기</Text>
+
+      {user?.uid === comment.authorId && (
+        <Pressable onPress={() => setIsEditing(true)}>
+          <Text onPress={handleUpdateComment}>수정</Text>
         </Pressable>
+      )}
+
+      {isEditing && (
+        <InputField value={editedContent} onChangeText={setEditedContent} />
       )}
     </View>
   );
