@@ -1,9 +1,11 @@
 import { colors } from "@/constants/colors";
+import { useDeleteComment } from "@/hooks/useDeleteComment";
 import { useAuthStore } from "@/store/useAuthStore";
 import { PostComment } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import InputField from "../common/InputField";
 import Profile from "./Profile";
 
@@ -18,8 +20,21 @@ export default function CommentItem({
 }: CommentItemProps) {
   const { user } = useAuthStore();
 
+  const { deleteComment } = useDeleteComment(comment.postId);
+
   const handlePressOption = () => {
-    //TODO: 댓글 삭제, 수정 기능 구현
+    Alert.alert("댓글 삭제", "댓글을 삭제하시겠습니까?", [
+      {
+        text: "취소",
+      },
+      {
+        text: "삭제",
+        onPress: async () => {
+          const result = await deleteComment(comment.id);
+          result && router.reload();
+        },
+      },
+    ]);
   };
 
   const handleReplySubmit = () => {
@@ -76,12 +91,12 @@ const styles = StyleSheet.create({
     borderColor: colors.GRAY_200,
     borderWidth: 1,
   },
-  replyContainer: {},
+  replyContainer: {
+    marginTop: 12,
+  },
   replyText: {
     fontSize: 14,
     color: "tomato",
     fontWeight: "bold",
   },
-  submitButton: {},
-  submitButtonText: {},
 });
