@@ -10,6 +10,7 @@ interface User {
 
 interface Post {
   id: string;
+  title?: string;
   authorId: string;
   content: string;
   imageUrl: string[];
