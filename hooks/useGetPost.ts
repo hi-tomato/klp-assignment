@@ -34,10 +34,18 @@ export const useGetPosts = () => {
     const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
 
     const unsub = onSnapshot(q, (snapshot) => {
-      const postsData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Post[];
+      const postsData = snapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .filter(
+          (post: any) =>
+            post.id &&
+            post.id.trim() !== "" &&
+            post.authorId &&
+            post.authorId.trim() !== ""
+        ) as Post[];
 
       setPosts(postsData);
     });
