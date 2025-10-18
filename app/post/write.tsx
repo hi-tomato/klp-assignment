@@ -53,7 +53,7 @@ export default function WriteScreen() {
         />
       ),
     });
-  }, [navigation, writeForm.handleSubmit, onSubmit]);
+  }, [navigation, writeForm, writeForm.handleSubmit, onSubmit]);
 
   return (
     <FormProvider {...writeForm}>
