@@ -1,3 +1,5 @@
+import { colors } from "@/constants/colors";
+import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
 
@@ -11,13 +13,27 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: "Feed",
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              size={24}
+              name={focused ? "home" : "home-outline"}
+              color={focused ? colors.BLACK : colors.GRAY_500}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="explore"
         options={{
-          title: "Explore",
+          title: "My Page",
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name={focused ? "person" : "person-outline"}
+              size={24}
+              color={focused ? colors.BLACK : colors.GRAY_500}
+            />
+          ),
         }}
       />
     </Tabs>
