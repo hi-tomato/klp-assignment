@@ -8,13 +8,15 @@ import { useGetComments } from "@/hooks/useGetComments";
 import { useGetPost } from "@/hooks/useGetPost";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Alert,
+  Keyboard,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
@@ -24,6 +26,7 @@ export default function PostScreen() {
   const [comment, setComment] = useState("");
   const { id } = useLocalSearchParams();
   const { post } = useGetPost(id as string);
+  const inputRef = useRef<TextInput | null>(null);
 
   const { comments, loading: commentsLoading } = useGetComments(id as string);
   const { addComment } = useAddComment();
@@ -43,7 +46,9 @@ export default function PostScreen() {
   return (
     <AuthRoutes>
       <SafeAreaView style={styles.container}>
-        <KeyboardAwareScrollView>
+        <KeyboardAwareScrollView
+          contentContainerStyle={styles.awareScrollViewContainer}
+        >
           <ScrollView
             style={{ marginBottom: 75 }}
             contentContainerStyle={styles.scrollViewContainer}
@@ -76,6 +81,9 @@ export default function PostScreen() {
 
           <View style={styles.commentContainer}>
             <InputField
+              ref={inputRef}
+              returnKeyType="send"
+              onSubmitEditing={() => Keyboard.dismiss()}
               value={comment}
               onChangeText={(t) => setComment(t)}
               placeholder="댓글을 입력해주세요."
@@ -100,6 +108,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.BACKGROUND,
+  },
+  awareScrollViewContainer: {
+    flex: 1,
+    backgroundColor: colors.GRAY_200,
   },
   scrollViewContainer: {
     flex: 1,
