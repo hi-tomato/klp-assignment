@@ -1,4 +1,5 @@
 import CustomButton from "@/components/common/CustomButton";
+import FeedFooter from "@/components/feed/FeedFooter";
 import ImagePreview from "@/components/feed/ImagePreview";
 import ContentInput from "@/components/input/ContentInput";
 import TitleInput from "@/components/input/TitleInput";
@@ -32,6 +33,7 @@ export default function WriteScreen() {
       imageUrl: [],
     },
   });
+  const imageUris = writeForm.watch("imageUrl");
 
   const onSubmit = useCallback(
     async (data: WriteFormValues): Promise<void> => {
@@ -98,8 +100,9 @@ export default function WriteScreen() {
       <View style={styles.formContainer}>
         <TitleInput />
         <ContentInput />
-        <ImagePreview imageUris={[]} />
+        <ImagePreview imageUris={imageUris} />
       </View>
+      <FeedFooter />
     </FormProvider>
   );
 }
