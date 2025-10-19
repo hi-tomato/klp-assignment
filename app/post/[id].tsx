@@ -17,6 +17,8 @@ import {
   Text,
   View,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function PostScreen() {
   const [comment, setComment] = useState("");
@@ -40,54 +42,56 @@ export default function PostScreen() {
 
   return (
     <AuthRoutes>
-      <View style={styles.container}>
-        <ScrollView
-          style={{ marginBottom: 75 }}
-          contentContainerStyle={styles.scrollViewContainer}
-        >
-          <FeedItem post={post || null} isDetail={true} />
+      <SafeAreaView style={styles.container}>
+        <KeyboardAwareScrollView>
+          <ScrollView
+            style={{ marginBottom: 75 }}
+            contentContainerStyle={styles.scrollViewContainer}
+          >
+            <FeedItem post={post || null} isDetail={true} />
 
-          {commentsLoading ? (
-            <View style={styles.emptyStateContainer}>
-              <Text style={styles.loadingText}>댓글을 불러오는 중...</Text>
-            </View>
-          ) : (
-            comments.map((comment) => (
-              <CommentItem key={comment.id} comment={comment} />
-            ))
-          )}
-          {/* 댓글이 없을 떄 */}
-          {comments.length === 0 && !commentsLoading && (
-            <View style={styles.emptyStateContainer}>
-              <Ionicons
-                name="chatbox-outline"
-                size={38}
-                color={colors.TEXT_SECONDARY}
-              />
-              <Text style={styles.emptyMessage}>
-                첫 번째 댓글을 달아보세요!
-              </Text>
-            </View>
-          )}
-        </ScrollView>
+            {commentsLoading ? (
+              <View style={styles.emptyStateContainer}>
+                <Text style={styles.loadingText}>댓글을 불러오는 중...</Text>
+              </View>
+            ) : (
+              comments.map((comment) => (
+                <CommentItem key={comment.id} comment={comment} />
+              ))
+            )}
+            {/* 댓글이 없을 떄 */}
+            {comments.length === 0 && !commentsLoading && (
+              <View style={styles.emptyStateContainer}>
+                <Ionicons
+                  name="chatbox-outline"
+                  size={38}
+                  color={colors.TEXT_SECONDARY}
+                />
+                <Text style={styles.emptyMessage}>
+                  첫 번째 댓글을 달아보세요!
+                </Text>
+              </View>
+            )}
+          </ScrollView>
 
-        <View style={styles.commentContainer}>
-          <InputField
-            value={comment}
-            onChangeText={(t) => setComment(t)}
-            placeholder="댓글을 입력해주세요."
-            rightElement={
-              <Pressable
-                disabled={!comment}
-                onPress={handleCommentSubmit}
-                style={styles.submitButton}
-              >
-                <Text style={styles.submitButtonText}>등록</Text>
-              </Pressable>
-            }
-          />
-        </View>
-      </View>
+          <View style={styles.commentContainer}>
+            <InputField
+              value={comment}
+              onChangeText={(t) => setComment(t)}
+              placeholder="댓글을 입력해주세요."
+              rightElement={
+                <Pressable
+                  disabled={!comment}
+                  onPress={handleCommentSubmit}
+                  style={styles.submitButton}
+                >
+                  <Text style={styles.submitButtonText}>등록</Text>
+                </Pressable>
+              }
+            />
+          </View>
+        </KeyboardAwareScrollView>
+      </SafeAreaView>
     </AuthRoutes>
   );
 }

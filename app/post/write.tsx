@@ -9,7 +9,8 @@ import { useUpdatePost } from "@/hooks/useUpdatePost";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useCallback, useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import Toast from "react-native-toast-message";
 
 type WriteFormValues = {
@@ -97,11 +98,11 @@ export default function WriteScreen() {
 
   return (
     <FormProvider {...writeForm}>
-      <View style={styles.formContainer}>
+      <KeyboardAwareScrollView style={styles.formContainer}>
         <TitleInput />
         <ContentInput />
         <ImagePreview imageUris={imageUris} />
-      </View>
+      </KeyboardAwareScrollView>
       <FeedFooter />
     </FormProvider>
   );

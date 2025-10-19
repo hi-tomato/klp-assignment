@@ -2,9 +2,9 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { Stack } from "expo-router";
 import { useEffect } from "react";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import "react-native-reanimated";
 import Toast from "react-native-toast-message";
-
 export const unstable_settings = {
   anchor: "(tabs)",
 };
@@ -12,10 +12,10 @@ export const unstable_settings = {
 export default function RootLayout() {
   return (
     <ActionSheetProvider>
-      <>
-        <Toast />
+      <KeyboardProvider>
         <RootLayoutNavigator />
-      </>
+      </KeyboardProvider>
+      <Toast />
     </ActionSheetProvider>
   );
 }
