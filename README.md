@@ -10,6 +10,7 @@ Feed API 통합 및 이미지 업로드 기능 구현
 - [x] **useGetPost.ts** - 게시글 조회
 - [x] **useUpdatePost.ts** - 게시글 수정
 - [x] **useDeletePost.ts** - 게시글 삭제
+- [x] **useSearchPosts.ts** - 게시글 찾기
 
 #### Comment (댓글) CRUD
 
