@@ -3,10 +3,12 @@ import { useDeleteComment } from "@/hooks/useDeleteComment";
 import { useUpdateComment } from "@/hooks/useUpdateComment";
 import { useAuthStore } from "@/store/useAuthStore";
 import { PostComment } from "@/types";
+import { useActionSheet } from "@expo/react-native-action-sheet";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import Toast from "react-native-toast-message";
 import InputField from "../common/InputField";
 import Profile from "./Profile";
 
@@ -25,35 +27,43 @@ export default function CommentItem({
   const { user } = useAuthStore();
   const { deleteComment } = useDeleteComment(comment.postId);
   const { updateComment } = useUpdateComment(comment.postId);
+  const { showActionSheetWithOptions } = useActionSheet();
 
   const handlePressOption = () => {
-    Alert.alert("댓글 삭제", "댓글을 삭제하시겠습니까?", [
-      {
-        text: "취소",
-      },
-      {
-        text: "삭제",
-        onPress: async () => {
-          const result = await deleteComment(comment.id);
-          result && router.reload();
-        },
-      },
-    ]);
+    const options = ["삭제", "수정", "취소"];
+    const destructiveButtonIndex = 0;
+    const editButtonIndex = 1;
+    const cancelButtonIndex = 2;
+
+    showActionSheetWithOptions({ options }, async (selectedIndex) => {
+      switch (selectedIndex) {
+        case destructiveButtonIndex:
+          const deleteResult = await deleteComment(comment.id);
+          Toast.show({
+            type: deleteResult ? "success" : "error",
+            text1: deleteResult
+              ? "댓글이 삭제되었습니다."
+              : "댓글 삭제에 실패했습니다.",
+          });
+          deleteResult && router.reload();
+          break;
+        case editButtonIndex:
+          setIsEditing(true);
+          break;
+        case cancelButtonIndex:
+          break;
+      }
+    });
   };
 
-  const handleUpdateComment = () => {
-    setIsEditing(true);
-    Alert.alert("댓글 수정", "댓글을 수정하시겠습니까?", [
-      { text: "취소" },
-      {
-        text: "수정",
-        onPress: async () => {
-          const result = await updateComment(comment.id, editedContent);
-          setIsEditing(false);
-          result && router.reload();
-        },
-      },
-    ]);
+  const handleUpdateComment = async () => {
+    await updateComment(comment.id, editedContent);
+    Toast.show({
+      type: "success",
+      text1: "댓글이 수정되었습니다.",
+    });
+    setIsEditing(false);
+    router.reload();
   };
 
   if (!comment)
@@ -86,14 +96,18 @@ export default function CommentItem({
         value={!comment.content ? "삭제된 댓글입니다." : comment.content}
       />
 
-      {user?.uid === comment.authorId && (
-        <Pressable onPress={() => setIsEditing(true)}>
-          <Text onPress={handleUpdateComment}>수정</Text>
-        </Pressable>
-      )}
-
       {isEditing && (
-        <InputField value={editedContent} onChangeText={setEditedContent} />
+        <View>
+          <InputField value={editedContent} onChangeText={setEditedContent} />
+          <View style={{ flexDirection: "row", gap: 8 }}>
+            <Pressable onPress={handleUpdateComment}>
+              <Text style={styles.saveText}>저장</Text>
+            </Pressable>
+            <Pressable onPress={() => setIsEditing(false)}>
+              <Text style={styles.cancelText}>취소</Text>
+            </Pressable>
+          </View>
+        </View>
       )}
     </View>
   );
@@ -113,6 +127,16 @@ const styles = StyleSheet.create({
   replyText: {
     fontSize: 14,
     color: "tomato",
+    fontWeight: "bold",
+  },
+  saveText: {
+    fontSize: 14,
+    color: "tomato",
+    fontWeight: "bold",
+  },
+  cancelText: {
+    fontSize: 14,
+    color: colors.GRAY_700,
     fontWeight: "bold",
   },
 });

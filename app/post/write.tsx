@@ -91,7 +91,7 @@ export default function WriteScreen() {
         />
       ),
     });
-  }, [navigation, writeForm, writeForm.handleSubmit, onSubmit]);
+  }, [navigation, writeForm, writeForm.handleSubmit, onSubmit, isEditMode]);
 
   return (
     <FormProvider {...writeForm}>

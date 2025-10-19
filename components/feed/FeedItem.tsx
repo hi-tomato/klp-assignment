@@ -86,7 +86,7 @@ export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
           />
         }
       />
-      {post.title && <Text>{post.title}</Text>}
+
       <Text numberOfLines={3} style={styles.description}>
         {post.content}
       </Text>
