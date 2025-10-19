@@ -1,26 +1,38 @@
 import { colors } from "@/constants/colors";
-import { User } from "firebase/auth";
 import { ReactNode } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 interface ProfileProps {
-  user: User;
+  displayName: string;
+  imageUri?: string;
+  createdAt: string;
   option?: ReactNode;
+  onPress: () => void;
 }
 
-export default function Profile({ user, option }: ProfileProps) {
+export default function Profile({
+  displayName,
+  imageUri,
+  createdAt,
+  option,
+  onPress,
+}: ProfileProps) {
   return (
     <View style={styles.container}>
-      <Pressable style={styles.profileContainer}>
+      <Pressable style={styles.profileContainer} onPress={() => {}}>
         <Image
           style={styles.avatar}
-          source={require("@/assets/images/favicon.png")}
+          source={
+            imageUri
+              ? { uri: imageUri }
+              : require("@/assets/images/favicon.png")
+          }
         />
         <View style={{ gap: 4 }}>
           <Text style={styles.nickname}>
-            {user ? user.email : "익명사용자"}
+            {displayName ? displayName : "익명 사용자"}
           </Text>
-          <Text style={styles.createdAt}>2시간 전...</Text>
+          <Text style={styles.createdAt}>{createdAt}</Text>
         </View>
       </Pressable>
       {option}

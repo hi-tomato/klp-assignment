@@ -1,23 +1,71 @@
 import { colors } from "@/constants/colors";
+import { useLike } from "@/hooks/useLike";
+import { useDeletePost } from "@/hooks/usePost";
+import { Post } from "@/types";
+import { useActionSheet } from "@expo/react-native-action-sheet";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import Toast from "react-native-toast-message";
 import ImagePreview from "./ImagePreview";
 import Profile from "./Profile";
 
 interface FeedItemProps {
-  user: any;
+  post: Post | null;
   isDetail?: boolean;
 }
-const post = { id: "1" };
 
-export default function FeedItem({ user, isDetail = false }: FeedItemProps) {
+export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
+  const { showActionSheetWithOptions } = useActionSheet();
+  const { toggleLiked, isLiked } = useLike(post?.id ?? "");
+  const { deletePost } = useDeletePost();
   const Container = isDetail ? View : Pressable;
 
   const handleMoreOption = () => {
-    // TODO: 삭제, 취소 버튼
+    const options = ["삭제", "수정", "취소"];
+    const destructiveButtonIndex = 0;
+    const updateButtonIndex = 1;
+    const cancelButtonIndex = 2;
+
+    showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+        destructiveButtonIndex,
+      },
+      async (selectedIndex) => {
+        switch (selectedIndex) {
+          case destructiveButtonIndex:
+            try {
+              const result = await deletePost(post?.id ?? "");
+              Toast.show({
+                type: result ? "success" : "error",
+                text1: result
+                  ? "게시글이 삭제되었습니다."
+                  : "게시글 삭제에 실패했습니다.",
+              });
+              result && router.reload();
+            } catch (error) {
+              Toast.show({
+                type: "error",
+                text1: "게시글 삭제에 실패했습니다.",
+              });
+            }
+            break;
+
+          case updateButtonIndex:
+            router.push(`/post/write?id=${post?.id}`);
+            break;
+
+          case cancelButtonIndex:
+            break;
+        }
+      }
+    );
   };
+
+  if (!post) return null;
 
   return (
     <Container
@@ -25,7 +73,10 @@ export default function FeedItem({ user, isDetail = false }: FeedItemProps) {
       onPress={() => router.push(`/post/${post.id}`)}
     >
       <Profile
-        user={user}
+        displayName={post.authorId}
+        createdAt={post.createdAt.toDate().toLocaleString() || "방금 전"}
+        imageUri={post.imageUrl[0]}
+        onPress={() => router.push(`/post/${post.id}`)}
         option={
           <Ionicons
             name="ellipsis-vertical"
@@ -35,22 +86,31 @@ export default function FeedItem({ user, isDetail = false }: FeedItemProps) {
           />
         }
       />
+
       <Text numberOfLines={3} style={styles.description}>
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Lorem ipsum,
-        dolor sit amet consectetur adipisicing elit. Lorem ipsum, dolor sit amet
-        consectetur adipisicing elit.
+        {post.content}
       </Text>
 
-      <ImagePreview imageUris={["https://picsum.photos/200/300"]} />
+      <ImagePreview imageUris={post.imageUrl} />
 
       <View style={styles.actionContainer}>
         <Pressable style={styles.menu}>
-          <Ionicons name="heart" size={24} color={colors.BLACK} />
-          <Text style={styles.menuText}>0</Text>
+          <Ionicons
+            name={isLiked ? "heart" : "heart-outline"}
+            size={24}
+            color={isLiked ? "red" : colors.BLACK}
+            onPress={() => toggleLiked()}
+          />
+          <Text style={styles.menuText}>{post.likeCount}</Text>
         </Pressable>
         <Pressable style={styles.menu}>
-          <Ionicons name="chatbox" size={24} color={colors.BLACK} />
-          <Text style={styles.menuText}>0</Text>
+          <Ionicons
+            name={post.commentCount > 0 ? "chatbox" : "chatbox-outline"}
+            size={24}
+            color={post.commentCount > 0 ? colors.BLACK : colors.GRAY_500}
+            onPress={() => router.push(`/post/${post.id}`)}
+          />
+          <Text style={styles.menuText}>{post.commentCount}</Text>
         </Pressable>
       </View>
     </Container>

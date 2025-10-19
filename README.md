@@ -1,50 +1,38 @@
-# Welcome to your Expo app 👋
+## **Feature-6/feed-api-integration**
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Feed API 통합 및 이미지 업로드 기능 구현
 
-## Get started
+### 구현 완료
 
-1. Install dependencies
+#### Feed (게시글) CRUD
 
-   ```bash
-   npm install
-   ```
+- [x] **usePost.ts** - 게시글 생성
+- [x] **useGetPost.ts** - 게시글 조회
+- [x] **useUpdatePost.ts** - 게시글 수정
+- [x] **useDeletePost.ts** - 게시글 삭제
+- [x] **useSearchPosts.ts** - 게시글 찾기
 
-2. Start the app
+#### Comment (댓글) CRUD
 
-   ```bash
-   npx expo start
-   ```
+- [x] **useAddComment.ts** - 댓글 추가
+- [x] **useGetComments.ts** - 댓글 조회
+- [x] **useUpdateComment.ts** - 댓글 수정
+- [x] **useDeleteComment.ts** - 댓글 삭제
 
-In the output, you'll find options to open the app in a
+#### Like (좋아요)
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- [x] **useLike.ts** - 좋아요 추가/삭제/조회
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+#### Image Upload (이미지 업로드)
 
-## Get a fresh project
+- [x] **useImageUploader.ts** - 이미지 선택 및 업로드
+- [x] **ImagePreview.tsx** - 이미지 미리보기
+- [x] **ImageViewerScreen** - 이미지 전체화면 보기
+- [x] **FeedFooter.tsx** - 이미지 업로드 UI
 
-When you're ready, run:
+### 주요 기능
 
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- Firebase Storage 연동
+- 다중 이미지 선택 및 업로드
+- 실시간 이미지 미리보기
+- 이미지 뷰어

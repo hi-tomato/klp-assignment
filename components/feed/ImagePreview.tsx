@@ -1,11 +1,15 @@
+import { Image } from "expo-image";
+import { router } from "expo-router";
 import React from "react";
-import { Image, Pressable, ScrollView, StyleSheet } from "react-native";
+import { Pressable, ScrollView, StyleSheet } from "react-native";
 
 interface ImagePreviewProps {
   imageUris: string[];
 }
 
 export default function ImagePreview({ imageUris = [] }: ImagePreviewProps) {
+  console.log("imageUris: ", imageUris);
+
   return (
     <ScrollView
       horizontal
@@ -13,7 +17,16 @@ export default function ImagePreview({ imageUris = [] }: ImagePreviewProps) {
       contentContainerStyle={styles.container}
     >
       {imageUris.map((imageUri, index) => (
-        <Pressable style={styles.imageContainer} key={index}>
+        <Pressable
+          style={styles.imageContainer}
+          key={index}
+          onPress={() => {
+            router.push({
+              pathname: "/image-viewer",
+              params: { imageUri: encodeURIComponent(imageUri) },
+            });
+          }}
+        >
           <Image source={{ uri: imageUri }} style={styles.image} />
         </Pressable>
       ))}

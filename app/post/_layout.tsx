@@ -29,6 +29,22 @@ export default function PostLayout() {
           ),
         }}
       />
+      <Stack.Screen
+        name="write"
+        options={{
+          headerShown: true,
+          headerTitle: "게시글 작성",
+          headerLeft: () => (
+            <Pressable
+              onPress={() =>
+                router.canGoBack() ? router.back() : router.replace("/")
+              }
+            >
+              <Feather name="arrow-left" size={28} color={"black"} />
+            </Pressable>
+          ),
+        }}
+      />
     </Stack>
   );
 }

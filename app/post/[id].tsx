@@ -3,17 +3,38 @@ import InputField from "@/components/common/InputField";
 import CommentItem from "@/components/feed/CommentItem";
 import FeedItem from "@/components/feed/FeedItem";
 import { colors } from "@/constants/colors";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useAddComment } from "@/hooks/useAddComment";
+import { useGetComments } from "@/hooks/useGetComments";
+import { useGetPost } from "@/hooks/useGetPost";
+import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 export default function PostScreen() {
   const [comment, setComment] = useState("");
-  // const { id } = useLocalSearchParams();
-  const { user } = useAuthStore();
+  const { id } = useLocalSearchParams();
+  const { post } = useGetPost(id as string);
+
+  const { comments, loading: commentsLoading } = useGetComments(id as string);
+  const { addComment } = useAddComment();
 
   const handleCommentSubmit = () => {
-    // TODO: 댓글 등록 API 기능 구현
+    addComment(id as string, comment)
+      .then((commentId) => {
+        console.log("댓글 등록 성공: ", commentId);
+        setComment("");
+      })
+      .catch((error) => {
+        console.error("댓글 등록 실패: ", error);
+        Alert.alert("댓글 등록 실패", error.message);
+      });
   };
 
   return (
@@ -23,9 +44,23 @@ export default function PostScreen() {
           style={{ marginBottom: 75 }}
           contentContainerStyle={styles.scrollViewContainer}
         >
-          <FeedItem user={user} isDetail={true} />
+          <FeedItem post={post || null} isDetail={true} />
 
-          <CommentItem />
+          {commentsLoading ? (
+            <View>
+              <Text>댓글을 불러오는 중...</Text>
+            </View>
+          ) : (
+            comments.map((comment) => (
+              <CommentItem key={comment.id} comment={comment} />
+            ))
+          )}
+          {/* 댓글이 없을 떄 */}
+          {comments.length === 0 && !commentsLoading && (
+            <View>
+              <Text>첫 번째 댓글을 달아보세요!</Text>
+            </View>
+          )}
         </ScrollView>
 
         <View style={styles.commentContainer}>

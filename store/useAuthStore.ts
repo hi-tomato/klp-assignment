@@ -12,7 +12,7 @@ type AuthState = {
   initializing: boolean;
   loading: boolean;
   error: Error | null;
-  setUser: (user: User) => void;
+  setUser: (user: User | null) => void;
   setInitializing: (value: boolean) => void;
   login: (email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
@@ -23,7 +23,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   initializing: true,
   loading: false,
   error: null,
-  setUser: (user: User) => set({ user }),
+  setUser: (user) => set({ user }),
   setInitializing: (value: boolean) => set({ initializing: value }),
   login: async (email: string, password: string) => {
     set({ loading: true, error: null });
@@ -56,6 +56,6 @@ export const useAuthStore = create<AuthState>((set) => ({
 
 onAuthStateChanged(auth, (user) => {
   const { setUser, setInitializing } = useAuthStore.getState();
-  setUser(user as User);
+  setUser(user);
   setInitializing(false);
 });

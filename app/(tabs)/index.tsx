@@ -1,74 +1,42 @@
-import FeedItem from "@/components/feed/FeedItem";
+import FeedList from "@/components/feed/FeedList";
+import FeedSearchBar from "@/components/feed/FeedSearchBar";
 import { colors } from "@/constants/colors";
+import { useSearchPosts } from "@/hooks/useSearchPosts";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Ionicons } from "@expo/vector-icons";
-import { useScrollToTop } from "@react-navigation/native";
-import { useRef } from "react";
-import { FlatList, Pressable, StyleSheet } from "react-native";
+import { router } from "expo-router";
+import { useState } from "react";
+import { Image, Pressable, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-const dummyData = [
-  {
-    id: "1",
-    user: {
-      id: "1",
-      name: "이승준",
-      email: "test@naver.com",
-    },
-    content: "목데이터입니다.",
-    images: ["https://picsum.photos/200/300"],
-    createdAt: new Date(),
-  },
-  {
-    id: "1",
-    user: {
-      id: "1",
-      name: "이승준",
-      email: "test@naver.com",
-    },
-    content: "목데이터입니다.",
-    images: ["https://picsum.photos/200/300"],
-    createdAt: new Date(),
-  },
-  {
-    id: "1",
-    user: {
-      id: "1",
-      name: "이승준",
-      email: "test@naver.com",
-    },
-    content: "목데이터입니다.",
-    images: ["https://picsum.photos/200/300"],
-    createdAt: new Date(),
-  },
-  {
-    id: "1",
-    user: {
-      id: "1",
-      name: "이승준",
-      email: "test@naver.com",
-    },
-    content: "목데이터입니다.",
-    images: ["https://picsum.photos/200/300"],
-    createdAt: new Date(),
-  },
-];
 
 export default function HomeScreen() {
   const { user } = useAuthStore();
-  const flatListRef = useRef<FlatList | null>(null);
-  useScrollToTop(flatListRef);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { posts: searchResults, loading } = useSearchPosts(
+    searchQuery as string
+  );
 
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        data={dummyData}
-        ref={flatListRef}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <FeedItem user={item.user} />}
+      <View style={styles.headerContainer}>
+        <Image
+          source={{ uri: user?.photoURL as string }}
+          style={styles.profileImage}
+        />
+        <FeedSearchBar onSearch={setSearchQuery} loading={loading} />
+      </View>
+
+      <FeedList
+        searchQuery={searchQuery}
+        searchResults={searchResults}
+        isSearching={!!searchQuery.trim()}
       />
+
       {user?.email && (
-        <Pressable style={styles.editButton}>
+        <Pressable
+          style={styles.editButton}
+          onPress={() => router.push("/post/write")}
+        >
           <Ionicons name="pencil" size={32} color={"white"} />
         </Pressable>
       )}
@@ -80,6 +48,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.WHITE,
+  },
+  headerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingHorizontal: 12,
+  },
+  profileImage: {
+    width: 36,
+    height: 36,
+    borderRadius: 16,
+    backgroundColor: colors.GRAY_200,
   },
   description: {
     fontSize: 16,

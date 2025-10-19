@@ -1,45 +1,87 @@
 import { colors } from "@/constants/colors";
+import { useDeleteComment } from "@/hooks/useDeleteComment";
+import { useUpdateComment } from "@/hooks/useUpdateComment";
 import { useAuthStore } from "@/store/useAuthStore";
+import { PostComment } from "@/types";
+import { useActionSheet } from "@expo/react-native-action-sheet";
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import { router } from "expo-router";
+import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import Toast from "react-native-toast-message";
 import InputField from "../common/InputField";
 import Profile from "./Profile";
 
-const comment = {
-  user: {
-    id: "1",
-    name: "이승준",
-    email: "test@naver.com",
-  },
-  content: "목데이터 댓글입니다.",
-};
-
 interface CommentItemProps {
+  comment: PostComment;
   isReply?: boolean;
 }
 
-export default function CommentItem({ isReply = true }: CommentItemProps) {
+export default function CommentItem({
+  comment,
+  isReply = true,
+}: CommentItemProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState(comment.content);
+
   const { user } = useAuthStore();
+  const { deleteComment } = useDeleteComment(comment.postId);
+  const { updateComment } = useUpdateComment(comment.postId);
+  const { showActionSheetWithOptions } = useActionSheet();
 
   const handlePressOption = () => {
-    //TODO: 댓글 삭제, 수정 기능 구현
+    const options = ["삭제", "수정", "취소"];
+    const destructiveButtonIndex = 0;
+    const editButtonIndex = 1;
+    const cancelButtonIndex = 2;
+
+    showActionSheetWithOptions({ options }, async (selectedIndex) => {
+      switch (selectedIndex) {
+        case destructiveButtonIndex:
+          const deleteResult = await deleteComment(comment.id);
+          Toast.show({
+            type: deleteResult ? "success" : "error",
+            text1: deleteResult
+              ? "댓글이 삭제되었습니다."
+              : "댓글 삭제에 실패했습니다.",
+          });
+          deleteResult && router.reload();
+          break;
+        case editButtonIndex:
+          setIsEditing(true);
+          break;
+        case cancelButtonIndex:
+          break;
+      }
+    });
   };
 
-  const handleReplySubmit = () => {
-    // TODO: 대댓글 기능
+  const handleUpdateComment = async () => {
+    await updateComment(comment.id, editedContent);
+    Toast.show({
+      type: "success",
+      text1: "댓글이 수정되었습니다.",
+    });
+    setIsEditing(false);
+    router.reload();
   };
 
-  const handleShowReplyInput = () => {
-    // TODO:
-  };
+  if (!comment)
+    return (
+      <View>
+        <Text>댓글이 존재하지 않습니다.</Text>
+      </View>
+    );
 
   return (
     <View style={[styles.container]}>
       <Profile
-        user={user as any}
+        displayName={comment.authorId}
+        createdAt={comment.createdAt.toDate().toLocaleString()}
+        imageUri={comment.authorImageUrl || ""}
+        onPress={() => {}}
         option={
-          user?.uid === comment.user.id && (
+          user?.uid === comment.authorId && (
             <Ionicons
               name="ellipsis-vertical"
               size={24}
@@ -53,10 +95,19 @@ export default function CommentItem({ isReply = true }: CommentItemProps) {
         editable={false}
         value={!comment.content ? "삭제된 댓글입니다." : comment.content}
       />
-      {isReply && (
-        <Pressable style={styles.replyContainer} onPress={() => {}}>
-          <Text style={styles.replyText}>답글 남기기</Text>
-        </Pressable>
+
+      {isEditing && (
+        <View>
+          <InputField value={editedContent} onChangeText={setEditedContent} />
+          <View style={{ flexDirection: "row", gap: 8 }}>
+            <Pressable onPress={handleUpdateComment}>
+              <Text style={styles.saveText}>저장</Text>
+            </Pressable>
+            <Pressable onPress={() => setIsEditing(false)}>
+              <Text style={styles.cancelText}>취소</Text>
+            </Pressable>
+          </View>
+        </View>
       )}
     </View>
   );
@@ -70,12 +121,22 @@ const styles = StyleSheet.create({
     borderColor: colors.GRAY_200,
     borderWidth: 1,
   },
-  replyContainer: {},
+  replyContainer: {
+    marginTop: 12,
+  },
   replyText: {
     fontSize: 14,
     color: "tomato",
     fontWeight: "bold",
   },
-  submitButton: {},
-  submitButtonText: {},
+  saveText: {
+    fontSize: 14,
+    color: "tomato",
+    fontWeight: "bold",
+  },
+  cancelText: {
+    fontSize: 14,
+    color: colors.GRAY_700,
+    fontWeight: "bold",
+  },
 });
