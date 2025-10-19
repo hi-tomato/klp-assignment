@@ -27,10 +27,18 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     width: "100%",
-
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.GRAY_300,
-    paddingTop: 12,
+    backgroundColor: colors.WHITE,
+    borderTopWidth: 1,
+    borderTopColor: colors.BORDER_LIGHT,
+    paddingTop: 16,
     paddingHorizontal: 16,
+    shadowColor: colors.BLACK,
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 5,
   },
 });

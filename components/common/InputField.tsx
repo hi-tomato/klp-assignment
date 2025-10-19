@@ -60,41 +60,46 @@ const InputField = (
 
 const styles = StyleSheet.create({
   container: {
-    height: 44,
-    borderRadius: 8,
-    paddingHorizontal: 10,
+    height: 48,
+    borderRadius: 10,
+    paddingHorizontal: 14,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
   },
   label: {
-    fontSize: 12,
-    marginBottom: 5,
-    color: colors.GRAY_700,
+    fontSize: 13,
+    marginBottom: 6,
+    fontWeight: "600",
+    color: colors.TEXT_PRIMARY,
   },
   input: {
-    fontSize: 16,
+    fontSize: 15,
     padding: 0,
     flex: 1,
+    color: colors.TEXT_PRIMARY,
   },
   filled: {
     backgroundColor: colors.GRAY_100,
   },
   standard: {
     borderWidth: 1,
-    borderColor: colors.GRAY_200,
+    borderColor: colors.BORDER_DEFAULT,
+    backgroundColor: colors.WHITE,
   },
   outlined: {
-    borderWidth: 1,
-    borderColor: colors.GRAY_700,
+    borderWidth: 1.5,
+    borderColor: colors.GRAY_600,
+    backgroundColor: colors.WHITE,
   },
   errorMessage: {
     fontSize: 12,
     marginTop: 4,
-    color: "red",
+    color: colors.DANGER,
   },
   inputError: {
-    backgroundColor: "red",
+    borderColor: colors.DANGER,
+    borderWidth: 1.5,
   },
 });
 

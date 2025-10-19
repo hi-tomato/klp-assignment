@@ -34,39 +34,41 @@ export default function CustomButton({
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 8,
+    borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
   },
   medium: {
     alignSelf: "center",
-    paddingHorizontal: 12,
-    height: 38,
+    paddingHorizontal: 16,
+    height: 40,
   },
   large: {
     width: "100%",
-    height: 44,
+    height: 48,
   },
   filled: {
-    backgroundColor: "tomato",
-    fontSize: 14,
-    fontWeight: "bold",
-    color: colors.WHITE,
+    backgroundColor: colors.PRIMARY,
+    fontSize: 15,
+    fontWeight: "700",
   },
   filledText: {
     color: colors.WHITE,
+    fontSize: 15,
+    fontWeight: "700",
   },
-  standard: {},
+  standard: {
+    backgroundColor: "transparent",
+  },
   standardText: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "tomato",
+    fontSize: 15,
+    fontWeight: "700",
+    color: colors.PRIMARY,
   },
   pressed: {
-    opacity: 0.7,
+    opacity: 0.75,
   },
   disabled: {
     backgroundColor: colors.GRAY_300,
-    color: colors.WHITE,
   },
 });
