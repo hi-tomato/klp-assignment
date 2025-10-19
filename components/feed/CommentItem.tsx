@@ -68,8 +68,8 @@ export default function CommentItem({
 
   if (!comment)
     return (
-      <View>
-        <Text>댓글이 존재하지 않습니다.</Text>
+      <View style={styles.notFoundContainer}>
+        <Text style={styles.notFoundText}>댓글이 존재하지 않습니다.</Text>
       </View>
     );
 
@@ -85,7 +85,7 @@ export default function CommentItem({
             <Ionicons
               name="ellipsis-vertical"
               size={24}
-              color="black"
+              color={colors.GRAY_700}
               onPress={handlePressOption}
             />
           )
@@ -118,25 +118,39 @@ const styles = StyleSheet.create({
     backgroundColor: colors.WHITE,
     padding: 16,
     gap: 12,
-    borderColor: colors.GRAY_200,
-    borderWidth: 1,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.BORDER_LIGHT,
   },
   replyContainer: {
     marginTop: 12,
   },
   replyText: {
     fontSize: 14,
-    color: "tomato",
-    fontWeight: "bold",
+    color: colors.PRIMARY,
+    fontWeight: "700",
   },
   saveText: {
     fontSize: 14,
-    color: "tomato",
-    fontWeight: "bold",
+    color: colors.PRIMARY,
+    fontWeight: "700",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
   },
   cancelText: {
     fontSize: 14,
-    color: colors.GRAY_700,
-    fontWeight: "bold",
+    color: colors.TEXT_SECONDARY,
+    fontWeight: "700",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  notFoundContainer: {
+    padding: 16,
+    backgroundColor: colors.GRAY_50,
+    alignItems: "center",
+  },
+  notFoundText: {
+    fontSize: 14,
+    color: colors.TEXT_SECONDARY,
+    fontStyle: "italic",
   },
 });

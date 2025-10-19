@@ -42,30 +42,32 @@ export default function Profile({
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: 12,
   },
   profileContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 12,
   },
   avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 50,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.GRAY_100,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 2,
+    borderColor: colors.BORDER_LIGHT,
+    backgroundColor: colors.GRAY_100,
   },
   nickname: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: colors.BLACK,
+    fontSize: 15,
+    fontWeight: "700",
+    color: colors.TEXT_PRIMARY,
+    marginBottom: 2,
   },
   createdAt: {
-    fontSize: 14,
-    color: colors.GRAY_500,
+    fontSize: 13,
+    color: colors.TEXT_SECONDARY,
   },
 });

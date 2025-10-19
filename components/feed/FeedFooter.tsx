@@ -15,8 +15,7 @@ export default function FeedFooter() {
   const inset = useSafeAreaInsets();
   const { control, setValue } = useFormContext();
   const [imageUris] = useWatch({ control, name: "imageUrl" });
-  const { pickImage, uploadMultipleImages, uploading, completedUpload } =
-    useImageUploader();
+  const { pickImage, uploadMultipleImages, uploading } = useImageUploader();
 
   const handleOpenImagePicker = async () => {
     const assets = await pickImage();
@@ -35,14 +34,14 @@ export default function FeedFooter() {
       <Pressable style={styles.footerIcon} onPress={handleOpenImagePicker}>
         <Ionicons
           name={"camera"}
-          size={20}
-          color={uploading ? colors.GRAY_500 : colors.BLACK}
+          size={24}
+          color={uploading ? colors.GRAY_500 : colors.PRIMARY}
         />
       </Pressable>
 
       {uploading && (
         <View style={styles.uploadingContainer}>
-          <ActivityIndicator size="small" color={colors.BLACK} />
+          <ActivityIndicator size="small" color={colors.PRIMARY} />
           <Text style={styles.uploadingText}>업로드 중...</Text>
         </View>
       )}
@@ -53,19 +52,27 @@ export default function FeedFooter() {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    paddingTop: 12,
+    paddingTop: 16,
     paddingHorizontal: 16,
     backgroundColor: colors.WHITE,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.GRAY_300,
+    borderTopWidth: 1,
+    borderTopColor: colors.BORDER_LIGHT,
     flexDirection: "row",
-    alignItems: "center", // 추가
-    gap: 10,
+    alignItems: "center",
+    gap: 12,
+    shadowColor: colors.BLACK,
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 4,
   },
   footerIcon: {
     backgroundColor: colors.GRAY_100,
-    padding: 10,
-    borderRadius: 5,
+    padding: 12,
+    borderRadius: 8,
   },
   footerIconDisabled: {
     opacity: 0.5,
@@ -73,10 +80,12 @@ const styles = StyleSheet.create({
   uploadingContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 10,
+    paddingHorizontal: 8,
   },
   uploadingText: {
-    color: colors.BLACK,
-    fontSize: 12,
+    color: colors.TEXT_SECONDARY,
+    fontSize: 13,
+    fontWeight: "500",
   },
 });

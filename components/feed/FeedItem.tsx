@@ -98,7 +98,7 @@ export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
           <Ionicons
             name={isLiked ? "heart" : "heart-outline"}
             size={24}
-            color={isLiked ? "red" : colors.BLACK}
+            color={isLiked ? colors.DANGER : colors.GRAY_600}
             onPress={() => toggleLiked()}
           />
           <Text style={styles.menuText}>{post.likeCount}</Text>
@@ -120,10 +120,15 @@ export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
 const styles = StyleSheet.create({
   contentContainer: {
     padding: 16,
+    backgroundColor: colors.WHITE,
+    marginBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.BORDER_LIGHT,
   },
   description: {
     fontSize: 16,
-    color: colors.BLACK,
+    lineHeight: 24,
+    color: colors.TEXT_PRIMARY,
     marginBottom: 14,
   },
   menu: {
@@ -131,18 +136,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 16,
-    gap: 4,
+    paddingVertical: 12,
+    gap: 6,
   },
   menuText: {
-    fontSize: 14,
-    color: colors.GRAY_700,
+    fontSize: 15,
+    fontWeight: "600",
+    color: colors.TEXT_SECONDARY,
   },
   actionContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    borderTopColor: colors.GRAY_300,
-    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.BORDER_LIGHT,
+    borderTopWidth: 1,
+    marginTop: 12,
   },
 });
