@@ -1,11 +1,12 @@
 import FixedButtonCTA from "@/components/common/FixedButtonCTA";
 import EmailInput from "@/components/input/EmailInput";
 import PasswordInput from "@/components/input/PasswordInput";
+import { colors } from "@/constants/colors";
 import { useAuthStore } from "@/store/useAuthStore";
 import { router } from "expo-router";
 import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 type FormValues = {
   email: string;
@@ -31,8 +32,14 @@ export default function LoginScreen() {
   return (
     <FormProvider {...loginFormValues}>
       <View style={styles.container}>
-        <EmailInput />
-        <PasswordInput />
+        <View style={styles.headerSection}>
+          <Text style={styles.title}>로그인</Text>
+          <Text style={styles.subtitle}>계정에 로그인하세요</Text>
+        </View>
+        <View style={styles.formSection}>
+          <EmailInput />
+          <PasswordInput />
+        </View>
       </View>
       <FixedButtonCTA
         label="로그인하기"
@@ -45,7 +52,24 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.BACKGROUND,
+    paddingHorizontal: 20,
+    paddingTop: 32,
+  },
+  headerSection: {
+    marginBottom: 32,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: colors.TEXT_PRIMARY,
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: colors.TEXT_SECONDARY,
+  },
+  formSection: {
     gap: 16,
-    margin: 16,
   },
 });
