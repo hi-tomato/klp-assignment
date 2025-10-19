@@ -6,6 +6,7 @@ import { colors } from "@/constants/colors";
 import { useAddComment } from "@/hooks/useAddComment";
 import { useGetComments } from "@/hooks/useGetComments";
 import { useGetPost } from "@/hooks/useGetPost";
+import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
@@ -47,8 +48,8 @@ export default function PostScreen() {
           <FeedItem post={post || null} isDetail={true} />
 
           {commentsLoading ? (
-            <View>
-              <Text>댓글을 불러오는 중...</Text>
+            <View style={styles.emptyStateContainer}>
+              <Text style={styles.loadingText}>댓글을 불러오는 중...</Text>
             </View>
           ) : (
             comments.map((comment) => (
@@ -57,8 +58,15 @@ export default function PostScreen() {
           )}
           {/* 댓글이 없을 떄 */}
           {comments.length === 0 && !commentsLoading && (
-            <View>
-              <Text>첫 번째 댓글을 달아보세요!</Text>
+            <View style={styles.emptyStateContainer}>
+              <Ionicons
+                name="chatbox-outline"
+                size={38}
+                color={colors.TEXT_SECONDARY}
+              />
+              <Text style={styles.emptyMessage}>
+                첫 번째 댓글을 달아보세요!
+              </Text>
             </View>
           )}
         </ScrollView>
@@ -87,27 +95,58 @@ export default function PostScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.WHITE,
+    backgroundColor: colors.BACKGROUND,
   },
   scrollViewContainer: {
     flex: 1,
   },
   commentContainer: {
     width: "100%",
-    borderTopColor: colors.GRAY_200,
-    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.BORDER_LIGHT,
+    borderTopWidth: 1,
     backgroundColor: colors.WHITE,
     padding: 16,
     bottom: 0,
     position: "absolute",
+    shadowColor: colors.BLACK,
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 5,
   },
   submitButton: {
-    padding: 8,
-    borderRadius: 5,
-    backgroundColor: "orange",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: colors.PRIMARY,
   },
   submitButtonText: {
     color: colors.WHITE,
-    fontWeight: "bold",
+    fontWeight: "700",
+    fontSize: 14,
+  },
+  emptyStateContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 60,
+    paddingHorizontal: 32,
+  },
+  emptyText: {
+    fontSize: 48,
+    marginBottom: 12,
+  },
+  emptyMessage: {
+    fontSize: 16,
+    color: colors.TEXT_SECONDARY,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+  loadingText: {
+    fontSize: 15,
+    color: colors.TEXT_SECONDARY,
   },
 });
