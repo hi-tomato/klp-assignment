@@ -1,11 +1,12 @@
 import { colors } from "@/constants/colors";
+import { timeAgo } from "@/util/timeago";
 import { ReactNode } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 interface ProfileProps {
   displayName: string;
   imageUri?: string;
-  createdAt: string;
+  createdAt: string | Date;
   option?: ReactNode;
   onPress: () => void;
 }
@@ -32,7 +33,13 @@ export default function Profile({
           <Text style={styles.nickname}>
             {displayName ? displayName : "익명 사용자"}
           </Text>
-          <Text style={styles.createdAt}>{createdAt}</Text>
+          <Text style={styles.createdAt}>
+            {timeAgo(
+              typeof createdAt === "string"
+                ? createdAt
+                : createdAt.toISOString()
+            )}
+          </Text>
         </View>
       </Pressable>
       {option}

@@ -76,7 +76,7 @@ export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
     >
       <Profile
         displayName={profile?.displayName ?? "용감한 토마토"}
-        createdAt={post.createdAt.toDate().toLocaleString() || "방금 전"}
+        createdAt={post.createdAt.toDate() || "방금 전"}
         imageUri={profile?.photoURL}
         onPress={() => router.push(`/post/${post.id}`)}
         option={
