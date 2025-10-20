@@ -24,12 +24,25 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="mypage"
         options={{
           title: "My Page",
           tabBarIcon: ({ focused }) => (
             <Ionicons
               name={focused ? "person" : "person-outline"}
+              size={24}
+              color={focused ? colors.BLACK : colors.GRAY_500}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="setting"
+        options={{
+          title: "settings",
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name={focused ? "settings" : "settings-outline"}
               size={24}
               color={focused ? colors.BLACK : colors.GRAY_500}
             />

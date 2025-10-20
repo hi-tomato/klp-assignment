@@ -14,8 +14,8 @@ export default function RootLayout() {
     <ActionSheetProvider>
       <KeyboardProvider>
         <RootLayoutNavigator />
+        <Toast />
       </KeyboardProvider>
-      <Toast />
     </ActionSheetProvider>
   );
 }
