@@ -2,6 +2,7 @@ import FixedButtonCTA from "@/components/common/FixedButtonCTA";
 import DisplayNameInput from "@/components/input/DisplayNameInput";
 import IntroduceInput from "@/components/input/IntroduceInput";
 import { colors } from "@/constants/colors";
+import { useImageUploader } from "@/hooks/useImageUploader";
 import { useUpdateProfile } from "@/hooks/useUpdateProfile";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Ionicons } from "@expo/vector-icons";
@@ -27,6 +28,7 @@ type ProfileFormValues = {
 export default function SettingScreen() {
   const { user } = useAuthStore();
   const { updateUserProfile, isLoading } = useUpdateProfile();
+  const { pickImage, uploadMultipleImages } = useImageUploader();
 
   const formMethods = useForm<ProfileFormValues>({
     defaultValues: {
@@ -57,8 +59,34 @@ export default function SettingScreen() {
     }
   };
 
-  const handleImageChange = () => {
+  const handleImageChange = async () => {
     // 이미지 변경
+    try {
+      const images = await pickImage();
+
+      if (!images || images.length === 0) {
+        return;
+      }
+
+      const uploadedUrls = await uploadMultipleImages([images[0].uri]);
+
+      if (uploadedUrls.length === 0) return;
+
+      await updateUserProfile({
+        photoURL: uploadedUrls[0],
+      });
+
+      Toast.show({
+        type: "success",
+        text1: "프로필 사진이 변경되었습니다",
+      });
+    } catch (err) {
+      Toast.show({
+        type: "error",
+        text1: "이미지 업로드 실패",
+        text2: err instanceof Error ? err.message : "다시 시도해주세요.",
+      });
+    }
   };
 
   return (
