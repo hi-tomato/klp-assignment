@@ -7,9 +7,9 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 import FeedItem from "./FeedItem";
 
 interface FeedListProps {
-  searchQuery: string;
-  searchResults: Post[];
-  isSearching: boolean;
+  searchQuery?: string;
+  searchResults?: Post[];
+  isSearching?: boolean;
 }
 
 export default function FeedList({
