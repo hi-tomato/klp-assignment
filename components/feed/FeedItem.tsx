@@ -1,4 +1,5 @@
 import { colors } from "@/constants/colors";
+import { useGetUserProfile } from "@/hooks/useGetUserProfile";
 import { useLike } from "@/hooks/useLike";
 import { useDeletePost } from "@/hooks/usePost";
 import { Post } from "@/types";
@@ -17,6 +18,7 @@ interface FeedItemProps {
 }
 
 export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
+  const { profile } = useGetUserProfile(post?.authorId);
   const { showActionSheetWithOptions } = useActionSheet();
   const { toggleLiked, isLiked } = useLike(post?.id ?? "");
   const { deletePost } = useDeletePost();
@@ -73,9 +75,9 @@ export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
       onPress={() => router.push(`/post/${post.id}`)}
     >
       <Profile
-        displayName={post.authorId}
+        displayName={profile?.displayName ?? "용감한 토마토"}
         createdAt={post.createdAt.toDate().toLocaleString() || "방금 전"}
-        imageUri={post.imageUrl[0]}
+        imageUri={profile?.photoURL}
         onPress={() => router.push(`/post/${post.id}`)}
         option={
           <Ionicons

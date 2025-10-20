@@ -20,7 +20,11 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
         <Image
-          source={{ uri: user?.photoURL as string }}
+          source={
+            user?.photoURL
+              ? { uri: user.photoURL }
+              : require("@/assets/images/default_profile.png")
+          }
           style={styles.profileImage}
         />
         <FeedSearchBar onSearch={setSearchQuery} loading={loading} />

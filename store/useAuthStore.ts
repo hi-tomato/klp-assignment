@@ -56,6 +56,15 @@ export const useAuthStore = create<AuthState>((set) => ({
 
 onAuthStateChanged(auth, (user) => {
   const { setUser, setInitializing } = useAuthStore.getState();
-  setUser(user);
+
+  if (user) {
+    const currentUser = useAuthStore.getState().user;
+    if (!currentUser || currentUser.uid !== user.uid) {
+      setUser(user);
+    }
+  } else {
+    setUser(null);
+  }
+
   setInitializing(false);
 });

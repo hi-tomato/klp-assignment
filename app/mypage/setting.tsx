@@ -81,7 +81,7 @@ export default function SettingScreen() {
                   source={
                     user?.photoURL
                       ? { uri: user.photoURL }
-                      : require("@/assets/images/favicon.png")
+                      : require("@/assets/images/default_profile.png")
                   }
                 />
                 <View style={styles.avatarOverlay}>

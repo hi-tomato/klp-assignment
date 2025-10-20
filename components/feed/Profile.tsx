@@ -25,7 +25,7 @@ export default function Profile({
           source={
             imageUri
               ? { uri: imageUri }
-              : require("@/assets/images/favicon.png")
+              : require("@/assets/images/default_profile.png")
           }
         />
         <View style={{ gap: 4 }}>
