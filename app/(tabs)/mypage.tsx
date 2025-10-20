@@ -2,6 +2,7 @@ import AuthRoutes from "@/components/AuthRoutes";
 import FeedItem from "@/components/feed/FeedItem";
 import { colors } from "@/constants/colors";
 import { useGetPosts } from "@/hooks/useGetPost";
+import { useGetUserProfile } from "@/hooks/useGetUserProfile";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -18,6 +19,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function MyPageScreen() {
   const { user } = useAuthStore();
   const { posts } = useGetPosts();
+  const { profile } = useGetUserProfile(user?.uid);
   const myPosts = posts?.filter((p) => p.authorId === user?.uid);
 
   return (
@@ -40,12 +42,13 @@ export default function MyPageScreen() {
                 {user?.displayName || "익명 사용자"}
               </Text>
               <Text style={styles.introduce}>
-                {user?.email || "소개글이 없습니다."}
+                {profile?.introduce || "아직 소개글을 입력하지 않으셨습니다."}
               </Text>
+              <Text style={styles.email}>{user?.email}</Text>
 
               <Pressable
                 style={styles.editButton}
-                onPress={() => router.push("/setting")}
+                onPress={() => router.push("/mypage/setting")}
               >
                 <Ionicons
                   name="settings-outline"
@@ -129,6 +132,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.TEXT_SECONDARY,
     lineHeight: 20,
+  },
+  email: {
+    fontSize: 12,
+    color: colors.TEXT_TERTIARY,
+    marginTop: 4,
   },
   editButton: {
     flexDirection: "row",
