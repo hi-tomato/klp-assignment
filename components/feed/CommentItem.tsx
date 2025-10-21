@@ -1,5 +1,6 @@
 import { colors } from "@/constants/colors";
 import { useDeleteComment } from "@/hooks/useDeleteComment";
+import { useGetUserProfile } from "@/hooks/useGetUserProfile";
 import { useUpdateComment } from "@/hooks/useUpdateComment";
 import { useAuthStore } from "@/store/useAuthStore";
 import { PostComment } from "@/types";
@@ -27,6 +28,7 @@ export default function CommentItem({
   const { deleteComment } = useDeleteComment(comment.postId);
   const { updateComment } = useUpdateComment(comment.postId);
   const { showActionSheetWithOptions } = useActionSheet();
+  const { profile } = useGetUserProfile(comment.authorId);
 
   const handlePressOption = () => {
     const options = ["삭제", "수정", "취소"];
@@ -73,9 +75,9 @@ export default function CommentItem({
   return (
     <View style={[styles.container]}>
       <Profile
-        displayName={comment.authorId}
-        createdAt={comment.createdAt.toDate().toLocaleString()}
-        imageUri={comment.authorImageUrl || ""}
+        displayName={profile?.displayName || comment.authorId}
+        createdAt={comment.createdAt.toDate()}
+        imageUri={profile?.photoURL || comment.authorImageUrl || ""}
         onPress={() => {}}
         option={
           user?.uid === comment.authorId && (
