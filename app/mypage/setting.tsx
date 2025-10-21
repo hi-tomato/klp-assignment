@@ -38,55 +38,38 @@ export default function SettingScreen() {
   });
 
   const handleSave = async (data: ProfileFormValues) => {
-    try {
-      await updateUserProfile({
-        displayName: data.displayName,
-        introduce: data.introduce,
-      });
+    await updateUserProfile({
+      displayName: data.displayName,
+      introduce: data.introduce,
+    });
 
-      Toast.show({
-        type: "success",
-        text1: "프로필 업데이트 성공",
-      });
+    Toast.show({
+      type: "success",
+      text1: "프로필 업데이트 성공",
+    });
 
-      router.push("/(tabs)/mypage");
-    } catch (err) {
-      Toast.show({
-        type: "error",
-        text1: "프로필 업데이트 실패",
-        text2: err instanceof Error ? err.message : "다시 시도해주세요.",
-      });
-    }
+    router.push("/(tabs)/mypage");
   };
 
   const handleImageChange = async () => {
-    // 이미지 변경
-    try {
-      const images = await pickImage();
+    const images = await pickImage();
 
-      if (!images || images.length === 0) {
-        return;
-      }
-
-      const uploadedUrls = await uploadMultipleImages([images[0].uri]);
-
-      if (uploadedUrls.length === 0) return;
-
-      await updateUserProfile({
-        photoURL: uploadedUrls[0],
-      });
-
-      Toast.show({
-        type: "success",
-        text1: "프로필 사진이 변경되었습니다",
-      });
-    } catch (err) {
-      Toast.show({
-        type: "error",
-        text1: "이미지 업로드 실패",
-        text2: err instanceof Error ? err.message : "다시 시도해주세요.",
-      });
+    if (!images || images.length === 0) {
+      return;
     }
+
+    const uploadedUrls = await uploadMultipleImages([images[0].uri]);
+
+    if (uploadedUrls.length === 0) return;
+
+    await updateUserProfile({
+      photoURL: uploadedUrls[0],
+    });
+
+    Toast.show({
+      type: "success",
+      text1: "프로필 사진이 변경되었습니다",
+    });
   };
 
   return (
