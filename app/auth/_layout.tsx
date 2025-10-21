@@ -1,15 +1,24 @@
-import { colors } from "@/constants/colors";
+import { useDarkModeStore } from "@/store/useDarkModeStore";
+import { getColors } from "@/util/getColors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
 import React from "react";
 import { Pressable } from "react-native";
 
 export default function AuthLayout() {
+  const { isDarkMode } = useDarkModeStore();
+  const colors = getColors(isDarkMode);
+
   return (
     <Stack
       screenOptions={{
-        headerTintColor: colors.BLACK,
-        contentStyle: { backgroundColor: colors.WHITE },
+        headerStyle: {
+          backgroundColor: colors.CARD_BACKGROUND,
+        },
+        headerTintColor: colors.TEXT_PRIMARY,
+        contentStyle: {
+          backgroundColor: colors.BACKGROUND,
+        },
       }}
     >
       <Stack.Screen
@@ -18,11 +27,11 @@ export default function AuthLayout() {
           headerShown: true,
           title: "로그인",
           headerLeft: () => (
-            <Pressable onPress={() => router.back()}>
+            <Pressable onPress={() => router.push("/")}>
               <MaterialCommunityIcons
                 name="arrow-left"
                 size={24}
-                color={colors.BLACK}
+                color={colors.TEXT_PRIMARY}
               />
             </Pressable>
           ),
@@ -38,7 +47,7 @@ export default function AuthLayout() {
               <MaterialCommunityIcons
                 name="arrow-left"
                 size={24}
-                color={colors.BLACK}
+                color={colors.TEXT_PRIMARY}
               />
             </Pressable>
           ),
@@ -54,7 +63,7 @@ export default function AuthLayout() {
               <MaterialCommunityIcons
                 name="arrow-left"
                 size={24}
-                color={colors.BLACK}
+                color={colors.TEXT_PRIMARY}
               />
             </Pressable>
           ),
