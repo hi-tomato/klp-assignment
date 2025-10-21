@@ -1,6 +1,7 @@
 import { VALIDATION } from "@/constants/validation";
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
+import { Keyboard } from "react-native";
 import InputField from "../common/InputField";
 
 export default function PasswordInput() {
@@ -25,6 +26,7 @@ export default function PasswordInput() {
           errorMessage={error?.message}
           ref={ref}
           returnKeyType="done"
+          onSubmitEditing={() => Keyboard.dismiss()}
         />
       )}
     />

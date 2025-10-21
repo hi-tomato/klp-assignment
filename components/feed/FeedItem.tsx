@@ -1,12 +1,14 @@
-import { colors } from "@/constants/colors";
+import { useGetUserProfile } from "@/hooks/useGetUserProfile";
 import { useLike } from "@/hooks/useLike";
 import { useDeletePost } from "@/hooks/usePost";
+import { useDarkModeStore } from "@/store/useDarkModeStore";
 import { Post } from "@/types";
+import { getColors } from "@/util/getColors";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import React, { useMemo } from "react";
+import { Pressable, Share, StyleSheet, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 import ImagePreview from "./ImagePreview";
 import Profile from "./Profile";
@@ -17,6 +19,11 @@ interface FeedItemProps {
 }
 
 export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
+  const { isDarkMode } = useDarkModeStore();
+  const colors = getColors(isDarkMode);
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
+  const { profile } = useGetUserProfile(post?.authorId);
   const { showActionSheetWithOptions } = useActionSheet();
   const { toggleLiked, isLiked } = useLike(post?.id ?? "");
   const { deletePost } = useDeletePost();
@@ -37,20 +44,13 @@ export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
       async (selectedIndex) => {
         switch (selectedIndex) {
           case destructiveButtonIndex:
-            try {
-              const result = await deletePost(post?.id ?? "");
-              Toast.show({
-                type: result ? "success" : "error",
-                text1: result
-                  ? "게시글이 삭제되었습니다."
-                  : "게시글 삭제에 실패했습니다.",
-              });
-              result && router.reload();
-            } catch (error) {
-              Toast.show({
-                type: "error",
-                text1: "게시글 삭제에 실패했습니다.",
-              });
+            const result = await deletePost(post?.id ?? "");
+            Toast.show({
+              type: "success",
+              text1: "게시글이 삭제되었습니다.",
+            });
+            if (result && isDetail) {
+              router.back();
             }
             break;
 
@@ -65,6 +65,20 @@ export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
     );
   };
 
+  const handleShare = async () => {
+    const result = await Share.share({
+      message: `${post?.content}\n\n- ${profile?.displayName ?? "익명"}님의 게시글`,
+      title: "게시글 공유",
+    });
+
+    if (result.action === Share.sharedAction) {
+      Toast.show({
+        type: "success",
+        text1: "공유되었습니다",
+      });
+    }
+  };
+
   if (!post) return null;
 
   return (
@@ -73,15 +87,15 @@ export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
       onPress={() => router.push(`/post/${post.id}`)}
     >
       <Profile
-        displayName={post.authorId}
-        createdAt={post.createdAt.toDate().toLocaleString() || "방금 전"}
-        imageUri={post.imageUrl[0]}
+        displayName={profile?.displayName ?? "용감한 토마토"}
+        createdAt={post.createdAt.toDate() || "방금 전"}
+        imageUri={profile?.photoURL}
         onPress={() => router.push(`/post/${post.id}`)}
         option={
           <Ionicons
             name="ellipsis-vertical"
             size={24}
-            color={colors.BLACK}
+            color={colors.TEXT_PRIMARY}
             onPress={handleMoreOption}
           />
         }
@@ -98,7 +112,7 @@ export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
           <Ionicons
             name={isLiked ? "heart" : "heart-outline"}
             size={24}
-            color={isLiked ? "red" : colors.BLACK}
+            color={isLiked ? colors.DANGER : colors.GRAY_600}
             onPress={() => toggleLiked()}
           />
           <Text style={styles.menuText}>{post.likeCount}</Text>
@@ -107,42 +121,60 @@ export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
           <Ionicons
             name={post.commentCount > 0 ? "chatbox" : "chatbox-outline"}
             size={24}
-            color={post.commentCount > 0 ? colors.BLACK : colors.GRAY_500}
+            color={
+              post.commentCount > 0 ? colors.TEXT_PRIMARY : colors.GRAY_500
+            }
             onPress={() => router.push(`/post/${post.id}`)}
           />
           <Text style={styles.menuText}>{post.commentCount}</Text>
+        </Pressable>
+        <Pressable style={styles.menu} onPress={handleShare}>
+          <Ionicons
+            name="share-social-outline"
+            size={24}
+            color={colors.GRAY_600}
+          />
+          <Text style={styles.menuText}>공유</Text>
         </Pressable>
       </View>
     </Container>
   );
 }
 
-const styles = StyleSheet.create({
-  contentContainer: {
-    padding: 16,
-  },
-  description: {
-    fontSize: 16,
-    color: colors.BLACK,
-    marginBottom: 14,
-  },
-  menu: {
-    width: "50%",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 16,
-    gap: 4,
-  },
-  menuText: {
-    fontSize: 14,
-    color: colors.GRAY_700,
-  },
-  actionContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
-    borderTopColor: colors.GRAY_300,
-    borderTopWidth: StyleSheet.hairlineWidth,
-  },
-});
+const createStyles = (colors: ReturnType<typeof getColors>) =>
+  StyleSheet.create({
+    contentContainer: {
+      padding: 16,
+      backgroundColor: colors.CARD_BACKGROUND,
+      marginBottom: 8,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.BORDER_LIGHT,
+    },
+    description: {
+      fontSize: 16,
+      lineHeight: 24,
+      color: colors.TEXT_PRIMARY,
+      marginBottom: 14,
+    },
+    menu: {
+      width: "33.33%",
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      paddingVertical: 12,
+      gap: 6,
+    },
+    menuText: {
+      fontSize: 15,
+      fontWeight: "600",
+      color: colors.TEXT_SECONDARY,
+    },
+    actionContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-around",
+      borderTopColor: colors.BORDER_LIGHT,
+      borderTopWidth: 1,
+      marginTop: 12,
+    },
+  });

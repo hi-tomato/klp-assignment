@@ -36,16 +36,17 @@ export default function ImagePreview({ imageUris = [] }: ImagePreviewProps) {
 
 const styles = StyleSheet.create({
   container: {
-    gap: 5,
+    gap: 8,
     flexGrow: 1,
+    paddingVertical: 4,
   },
   imageContainer: {
-    width: 90,
-    height: 90,
+    width: 100,
+    height: 100,
   },
   image: {
     width: "100%",
     height: "100%",
-    borderRadius: 8,
+    borderRadius: 12,
   },
 });

@@ -1,11 +1,13 @@
-import { colors } from "@/constants/colors";
-import { ReactNode } from "react";
+import { useDarkModeStore } from "@/store/useDarkModeStore";
+import { getColors } from "@/util/getColors";
+import { timeAgo } from "@/util/timeago";
+import { ReactNode, useMemo } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 interface ProfileProps {
   displayName: string;
   imageUri?: string;
-  createdAt: string;
+  createdAt: string | Date;
   option?: ReactNode;
   onPress: () => void;
 }
@@ -17,6 +19,10 @@ export default function Profile({
   option,
   onPress,
 }: ProfileProps) {
+  const { isDarkMode } = useDarkModeStore();
+  const colors = getColors(isDarkMode);
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   return (
     <View style={styles.container}>
       <Pressable style={styles.profileContainer} onPress={() => {}}>
@@ -25,14 +31,20 @@ export default function Profile({
           source={
             imageUri
               ? { uri: imageUri }
-              : require("@/assets/images/favicon.png")
+              : require("@/assets/images/default_profile.png")
           }
         />
         <View style={{ gap: 4 }}>
           <Text style={styles.nickname}>
             {displayName ? displayName : "익명 사용자"}
           </Text>
-          <Text style={styles.createdAt}>{createdAt}</Text>
+          <Text style={styles.createdAt}>
+            {timeAgo(
+              typeof createdAt === "string"
+                ? createdAt
+                : createdAt.toISOString()
+            )}
+          </Text>
         </View>
       </Pressable>
       {option}
@@ -40,32 +52,35 @@ export default function Profile({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  profileContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 50,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.GRAY_100,
-  },
-  nickname: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: colors.BLACK,
-  },
-  createdAt: {
-    fontSize: 14,
-    color: colors.GRAY_500,
-  },
-});
+const createStyles = (colors: ReturnType<typeof getColors>) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 12,
+    },
+    profileContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+    },
+    avatar: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      borderWidth: 2,
+      borderColor: colors.BORDER_LIGHT,
+      backgroundColor: colors.GRAY_100,
+    },
+    nickname: {
+      fontSize: 15,
+      fontWeight: "700",
+      color: colors.TEXT_PRIMARY,
+      marginBottom: 2,
+    },
+    createdAt: {
+      fontSize: 13,
+      color: colors.TEXT_SECONDARY,
+    },
+  });
