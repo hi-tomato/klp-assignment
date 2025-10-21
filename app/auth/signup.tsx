@@ -2,10 +2,11 @@ import FixedButtonCTA from "@/components/common/FixedButtonCTA";
 import EmailInput from "@/components/input/EmailInput";
 import PasswordConfirmInput from "@/components/input/PasswordConfirmInput";
 import PasswordInput from "@/components/input/PasswordInput";
-import { colors } from "@/constants/colors";
 import { useSignUp } from "@/hooks/useSignUp";
+import { useDarkModeStore } from "@/store/useDarkModeStore";
+import { getColors } from "@/util/getColors";
 import { router } from "expo-router";
-import React from "react";
+import React, { useMemo } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
@@ -17,6 +18,10 @@ type SignUpFormValues = {
 
 export default function SignUpScreen() {
   const { signUp, error, isLoading } = useSignUp();
+  const { isDarkMode } = useDarkModeStore();
+  const colors = getColors(isDarkMode);
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   const signUpFormValues = useForm<SignUpFormValues>({
     defaultValues: {
       email: "",
@@ -71,57 +76,58 @@ export default function SignUpScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.BACKGROUND,
-    paddingHorizontal: 20,
-    paddingTop: 32,
-  },
-  headerSection: {
-    marginBottom: 32,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: colors.TEXT_PRIMARY,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: colors.TEXT_SECONDARY,
-  },
-  formSection: {
-    gap: 16,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: colors.BACKGROUND,
-    gap: 16,
-  },
-  loadingText: {
-    fontSize: 16,
-    color: colors.TEXT_SECONDARY,
-    fontWeight: "600",
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: colors.BACKGROUND,
-    paddingHorizontal: 32,
-    gap: 12,
-  },
-  errorText: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: colors.DANGER,
-  },
-  errorMessage: {
-    fontSize: 15,
-    color: colors.TEXT_SECONDARY,
-    textAlign: "center",
-  },
-});
+const createStyles = (colors: ReturnType<typeof getColors>) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.BACKGROUND,
+      paddingHorizontal: 20,
+      paddingTop: 32,
+    },
+    headerSection: {
+      marginBottom: 32,
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: "700",
+      color: colors.TEXT_PRIMARY,
+      marginBottom: 8,
+    },
+    subtitle: {
+      fontSize: 16,
+      color: colors.TEXT_SECONDARY,
+    },
+    formSection: {
+      gap: 16,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: colors.BACKGROUND,
+      gap: 16,
+    },
+    loadingText: {
+      fontSize: 16,
+      color: colors.TEXT_SECONDARY,
+      fontWeight: "600",
+    },
+    errorContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: colors.BACKGROUND,
+      paddingHorizontal: 32,
+      gap: 12,
+    },
+    errorText: {
+      fontSize: 20,
+      fontWeight: "700",
+      color: colors.DANGER,
+    },
+    errorMessage: {
+      fontSize: 15,
+      color: colors.TEXT_SECONDARY,
+      textAlign: "center",
+    },
+  });
