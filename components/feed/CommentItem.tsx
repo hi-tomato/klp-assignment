@@ -5,7 +5,6 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { PostComment } from "@/types";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
@@ -45,7 +44,6 @@ export default function CommentItem({
               ? "댓글이 삭제되었습니다."
               : "댓글 삭제에 실패했습니다.",
           });
-          deleteResult && router.reload();
           break;
         case editButtonIndex:
           setIsEditing(true);
@@ -63,7 +61,6 @@ export default function CommentItem({
       text1: "댓글이 수정되었습니다.",
     });
     setIsEditing(false);
-    router.reload();
   };
 
   if (!comment)

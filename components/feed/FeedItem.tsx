@@ -49,7 +49,9 @@ export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
               type: "success",
               text1: "게시글이 삭제되었습니다.",
             });
-            result && router.reload();
+            if (result && isDetail) {
+              router.back();
+            }
             break;
 
           case updateButtonIndex:
