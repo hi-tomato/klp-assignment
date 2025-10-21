@@ -1,0 +1,180 @@
+import { useGetUserProfile } from "@/hooks/useGetUserProfile";
+import { useLike } from "@/hooks/useLike";
+import { useDeletePost } from "@/hooks/usePost";
+import { useDarkModeStore } from "@/store/useDarkModeStore";
+import { Post } from "@/types";
+import { getColors } from "@/util/getColors";
+import { useActionSheet } from "@expo/react-native-action-sheet";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import React, { useMemo } from "react";
+import { Pressable, Share, StyleSheet, Text, View } from "react-native";
+import Toast from "react-native-toast-message";
+import ImagePreview from "./ImagePreview";
+import Profile from "./Profile";
+
+interface FeedItemProps {
+  post: Post | null;
+  isDetail?: boolean;
+}
+
+export default function FeedItem({ post, isDetail = false }: FeedItemProps) {
+  const { isDarkMode } = useDarkModeStore();
+  const colors = getColors(isDarkMode);
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
+  const { profile } = useGetUserProfile(post?.authorId);
+  const { showActionSheetWithOptions } = useActionSheet();
+  const { toggleLiked, isLiked } = useLike(post?.id ?? "");
+  const { deletePost } = useDeletePost();
+  const Container = isDetail ? View : Pressable;
+
+  const handleMoreOption = () => {
+    const options = ["삭제", "수정", "취소"];
+    const destructiveButtonIndex = 0;
+    const updateButtonIndex = 1;
+    const cancelButtonIndex = 2;
+
+    showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+        destructiveButtonIndex,
+      },
+      async (selectedIndex) => {
+        switch (selectedIndex) {
+          case destructiveButtonIndex:
+            const result = await deletePost(post?.id ?? "");
+            Toast.show({
+              type: "success",
+              text1: "게시글이 삭제되었습니다.",
+            });
+            if (result && isDetail) {
+              router.back();
+            }
+            break;
+
+          case updateButtonIndex:
+            router.push(`/post/write?id=${post?.id}`);
+            break;
+
+          case cancelButtonIndex:
+            break;
+        }
+      }
+    );
+  };
+
+  const handleShare = async () => {
+    const result = await Share.share({
+      message: `${post?.content}\n\n- ${profile?.displayName ?? "익명"}님의 게시글`,
+      title: "게시글 공유",
+    });
+
+    if (result.action === Share.sharedAction) {
+      Toast.show({
+        type: "success",
+        text1: "공유되었습니다",
+      });
+    }
+  };
+
+  if (!post) return null;
+
+  return (
+    <Container
+      style={styles.contentContainer}
+      onPress={() => router.push(`/post/${post.id}`)}
+    >
+      <Profile
+        displayName={profile?.displayName ?? "용감한 토마토"}
+        createdAt={post.createdAt.toDate() || "방금 전"}
+        imageUri={profile?.photoURL}
+        onPress={() => router.push(`/post/${post.id}`)}
+        option={
+          <Ionicons
+            name="ellipsis-vertical"
+            size={24}
+            color={colors.TEXT_PRIMARY}
+            onPress={handleMoreOption}
+          />
+        }
+      />
+
+      <Text numberOfLines={3} style={styles.description}>
+        {post.content}
+      </Text>
+
+      <ImagePreview imageUris={post.imageUrl} />
+
+      <View style={styles.actionContainer}>
+        <Pressable style={styles.menu}>
+          <Ionicons
+            name={isLiked ? "heart" : "heart-outline"}
+            size={24}
+            color={isLiked ? colors.DANGER : colors.GRAY_600}
+            onPress={() => toggleLiked()}
+          />
+          <Text style={styles.menuText}>{post.likeCount}</Text>
+        </Pressable>
+        <Pressable style={styles.menu}>
+          <Ionicons
+            name={post.commentCount > 0 ? "chatbox" : "chatbox-outline"}
+            size={24}
+            color={
+              post.commentCount > 0 ? colors.TEXT_PRIMARY : colors.GRAY_500
+            }
+            onPress={() => router.push(`/post/${post.id}`)}
+          />
+          <Text style={styles.menuText}>{post.commentCount}</Text>
+        </Pressable>
+        <Pressable style={styles.menu} onPress={handleShare}>
+          <Ionicons
+            name="share-social-outline"
+            size={24}
+            color={colors.GRAY_600}
+          />
+          <Text style={styles.menuText}>공유</Text>
+        </Pressable>
+      </View>
+    </Container>
+  );
+}
+
+const createStyles = (colors: ReturnType<typeof getColors>) =>
+  StyleSheet.create({
+    contentContainer: {
+      padding: 16,
+      backgroundColor: colors.CARD_BACKGROUND,
+      marginBottom: 8,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.BORDER_LIGHT,
+    },
+    description: {
+      fontSize: 16,
+      lineHeight: 24,
+      color: colors.TEXT_PRIMARY,
+      marginBottom: 14,
+    },
+    menu: {
+      width: "33.33%",
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      paddingVertical: 12,
+      gap: 6,
+    },
+    menuText: {
+      fontSize: 15,
+      fontWeight: "600",
+      color: colors.TEXT_SECONDARY,
+    },
+    actionContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-around",
+      borderTopColor: colors.BORDER_LIGHT,
+      borderTopWidth: 1,
+      marginTop: 12,
+    },
+  });

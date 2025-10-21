@@ -1,0 +1,22 @@
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# Native
+ios/
+android/
+
+# generated files
+expo-env.d.ts
+*.lockb
+package-lock.json
+
+# assets
+*.png
+*.jpg
+*.jpeg
+*.svg

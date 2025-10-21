@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Error 발생 시 중단
+set -e
+
+# Lint Check
+echo "🔍 린트 검사 시작..."
+npm run lint
+echo "✅ 린트 통과"
+
+# Type Check
+echo "🔍 타입 체크 시작..."
+npm run type-check
+echo "✅ 타입 체크 통과"
+
+echo "🎉 모든 검사 통과! 푸시를 진행합니다."

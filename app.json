@@ -19,7 +19,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
       "output": "static",
@@ -27,6 +28,7 @@
     },
     "plugins": [
       "expo-router",
+      "expo-image-picker",
       [
         "expo-splash-screen",
         {
@@ -43,6 +45,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "6a45fec3-0874-454e-b0ac-8a3f217c741e"
+      }
+    },
+    "owner": "seungjun99"
   }
 }
