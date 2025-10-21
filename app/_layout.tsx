@@ -1,3 +1,4 @@
+import { useNotifications } from "@/hooks/useNotifications";
 import { useAuthStore } from "@/store/useAuthStore";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { Stack } from "expo-router";
@@ -22,6 +23,7 @@ export default function RootLayout() {
 
 function RootLayoutNavigator() {
   const { user } = useAuthStore();
+  const { expoPushToken } = useNotifications();
 
   useEffect(() => {
     user?.uid &&
@@ -30,6 +32,12 @@ function RootLayoutNavigator() {
         text1: `${user?.displayName ?? "사용자"}님 환영합니다!`,
       });
   }, [user]);
+
+  useEffect(() => {
+    if (expoPushToken) {
+      console.log("Expo Notification Token:", expoPushToken);
+    }
+  }, [expoPushToken]);
 
   return (
     <Stack>

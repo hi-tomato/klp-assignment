@@ -10,6 +10,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import { sendPushNotification } from "./useNotifications";
 
 export const useLike = (postId?: string) => {
   const { user } = useAuthStore();
@@ -71,6 +72,16 @@ export const useLike = (postId?: string) => {
           likeCount: increment(1),
         });
 
+        const postSnap = await getDoc(postRef);
+        const postData = postSnap.data();
+
+        if (postData && postData.authorId !== user?.uid) {
+          await sendPushNotification(
+            postData.authorId,
+            "새로운 좋아요! ",
+            `${user?.displayName || "누군가"}님이 좋아요를 눌렀습니다.`
+          );
+        }
         setIsLiked(true);
         return true;
       }

@@ -3,11 +3,13 @@ import {
   addDoc,
   collection,
   doc,
+  getDoc,
   increment,
   Timestamp,
   updateDoc,
 } from "firebase/firestore";
 import { useState } from "react";
+import { sendPushNotification } from "./useNotifications";
 
 export const useAddComment = () => {
   const [loading, setLoading] = useState(false);
@@ -39,6 +41,17 @@ export const useAddComment = () => {
       await updateDoc(doc(db, `posts`, postId), {
         commentCount: increment(1),
       });
+
+      const postSnap = await getDoc(doc(db, `posts`, postId));
+      const postData = postSnap.data();
+
+      if (postData && postData.authorId !== user.uid) {
+        await sendPushNotification(
+          postData.authorId,
+          "새로운 댓글",
+          `${user.displayName || "누군가"}님이 댓글을 남겼습니다: ${content.substring(0, 30)}...`
+        );
+      }
 
       setLoading(false);
       return commentRef.id;
