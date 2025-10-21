@@ -1,6 +1,7 @@
-import { colors } from "@/constants/colors";
+import { useDarkModeStore } from "@/store/useDarkModeStore";
+import { getColors } from "@/util/getColors";
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import InputField from "../common/InputField";
 
@@ -13,6 +14,10 @@ export default function FeedSearchBar({
   onSearch,
   loading,
 }: FeedSearchBarProps) {
+  const { isDarkMode } = useDarkModeStore();
+  const colors = getColors(isDarkMode);
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   const [search, setSearch] = useState<string>("");
 
   useEffect(() => {
@@ -49,11 +54,12 @@ export default function FeedSearchBar({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  input: {
-    flex: 1,
-  },
-});
+const createStyles = (colors: ReturnType<typeof getColors>) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    input: {
+      flex: 1,
+    },
+  });

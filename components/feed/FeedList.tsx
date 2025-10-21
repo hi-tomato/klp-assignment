@@ -1,8 +1,9 @@
-import { colors } from "@/constants/colors";
 import { useGetPosts } from "@/hooks/useGetPost";
+import { useDarkModeStore } from "@/store/useDarkModeStore";
 import { Post } from "@/types";
+import { getColors } from "@/util/getColors";
 import { useScrollToTop } from "@react-navigation/native";
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import FeedItem from "./FeedItem";
 
@@ -17,6 +18,10 @@ export default function FeedList({
   searchResults,
   isSearching,
 }: FeedListProps) {
+  const { isDarkMode } = useDarkModeStore();
+  const colors = getColors(isDarkMode);
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   const flatListRef = useRef<FlatList | null>(null);
   const { posts } = useGetPosts();
 
@@ -45,28 +50,29 @@ export default function FeedList({
   );
 }
 
-const styles = StyleSheet.create({
-  listContainer: {
-    backgroundColor: colors.BACKGROUND_SECONDARY,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 32,
-    paddingVertical: 60,
-    backgroundColor: colors.BACKGROUND,
-  },
-  emptyText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.TEXT_PRIMARY,
-    textAlign: "center",
-    marginBottom: 8,
-  },
-  emptySubText: {
-    fontSize: 14,
-    color: colors.TEXT_SECONDARY,
-    textAlign: "center",
-  },
-});
+const createStyles = (colors: ReturnType<typeof getColors>) =>
+  StyleSheet.create({
+    listContainer: {
+      backgroundColor: colors.BACKGROUND_SECONDARY,
+    },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      paddingHorizontal: 32,
+      paddingVertical: 60,
+      backgroundColor: colors.BACKGROUND,
+    },
+    emptyText: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: colors.TEXT_PRIMARY,
+      textAlign: "center",
+      marginBottom: 8,
+    },
+    emptySubText: {
+      fontSize: 14,
+      color: colors.TEXT_SECONDARY,
+      textAlign: "center",
+    },
+  });

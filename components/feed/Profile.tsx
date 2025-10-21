@@ -1,6 +1,7 @@
-import { colors } from "@/constants/colors";
+import { useDarkModeStore } from "@/store/useDarkModeStore";
+import { getColors } from "@/util/getColors";
 import { timeAgo } from "@/util/timeago";
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 interface ProfileProps {
@@ -18,6 +19,10 @@ export default function Profile({
   option,
   onPress,
 }: ProfileProps) {
+  const { isDarkMode } = useDarkModeStore();
+  const colors = getColors(isDarkMode);
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   return (
     <View style={styles.container}>
       <Pressable style={styles.profileContainer} onPress={() => {}}>
@@ -47,34 +52,35 @@ export default function Profile({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  profileContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    borderWidth: 2,
-    borderColor: colors.BORDER_LIGHT,
-    backgroundColor: colors.GRAY_100,
-  },
-  nickname: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: colors.TEXT_PRIMARY,
-    marginBottom: 2,
-  },
-  createdAt: {
-    fontSize: 13,
-    color: colors.TEXT_SECONDARY,
-  },
-});
+const createStyles = (colors: ReturnType<typeof getColors>) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 12,
+    },
+    profileContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+    },
+    avatar: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      borderWidth: 2,
+      borderColor: colors.BORDER_LIGHT,
+      backgroundColor: colors.GRAY_100,
+    },
+    nickname: {
+      fontSize: 15,
+      fontWeight: "700",
+      color: colors.TEXT_PRIMARY,
+      marginBottom: 2,
+    },
+    createdAt: {
+      fontSize: 13,
+      color: colors.TEXT_SECONDARY,
+    },
+  });
