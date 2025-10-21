@@ -1,5 +1,6 @@
 import { useNotifications } from "@/hooks/useNotifications";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useDarkModeStore } from "@/store/useDarkModeStore";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { Stack } from "expo-router";
 import { useEffect } from "react";
@@ -38,6 +39,10 @@ function RootLayoutNavigator() {
       console.log("Expo Notification Token:", expoPushToken);
     }
   }, [expoPushToken]);
+
+  useEffect(() => {
+    useDarkModeStore.getState().loadDarkMode();
+  }, []);
 
   return (
     <Stack>
