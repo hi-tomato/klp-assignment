@@ -1,5 +1,4 @@
 export const colors = {
-  // Base Colors
   BLACK: "#000000",
   WHITE: "#FFFFFF",
 
@@ -25,17 +24,24 @@ export const colors = {
   SUCCESS: "#10B981",
   WARNING: "#F59E0B",
   INFO: "#3B82F6",
-
-  // Background Colors
   BACKGROUND: "#FFFFFF",
   BACKGROUND_SECONDARY: "#F9FAFB",
 
   // Border Colors
   BORDER_LIGHT: "#E5E7EB",
   BORDER_DEFAULT: "#D1D5DB",
-
-  // Text Colors
   TEXT_PRIMARY: "#111827",
   TEXT_SECONDARY: "#6B7280",
   TEXT_TERTIARY: "#9CA3AF",
+};
+
+export const darkColors = {
+  BACKGROUND: "#111827",
+  BACKGROUND_SECONDARY: "#1F2937",
+  BORDER_LIGHT: "#374151",
+  BORDER_DEFAULT: "#4B5563",
+  TEXT_PRIMARY: "#F9FAFB",
+  TEXT_SECONDARY: "#D1D5DB",
+  TEXT_TERTIARY: "#9CA3AF",
+  CARD_BACKGROUND: "#1F2937",
 };
